@@ -39,6 +39,7 @@
   .brand .title{font-weight:800;font-size:18px}
   .brand .sub{font-size:12px;opacity:0.95}
   .header-controls{display:flex;align-items:center;gap:10px;flex:1;justify-content:flex-end;min-width:260px}
+  .search{padding:8px 12px;border-radius:10px;border:0;min-width:220px}
   .btn{border:0;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:700}
   .btn-ghost{background:transparent;border-radius:10px;color:white;border:1px solid rgba(255,255,255,0.12)}
   .btn-primary{background:var(--card);color:var(--primary);font-weight:800;border-radius:10px;padding:8px 12px}
@@ -88,6 +89,7 @@
   /* small layout tweak for header controls on small screens */
   @media(max-width:720px){
     .header-controls{flex-wrap:wrap;justify-content:flex-end;gap:8px}
+    .search{min-width:140px}
   }
 
   /* ---------- Dark Mode Enhancements ---------- */
@@ -129,6 +131,10 @@
     color: rgba(255,255,255,0.6);
   }
 
+  body.dark .search {
+    background: #162032;
+    color: #e6eefb;
+  }
 
   input[disabled], textarea[disabled], select[disabled] {
     opacity: 0.6;
@@ -138,6 +144,7 @@
 
 /* Printable format for patient records */
 @media print {
+  header, .btn, .search, .nav, #darkToggle { display: none !important; }
   body {
     background: white !important;
     color: black !important;
@@ -156,29 +163,115 @@
 .print-header { display: none; }
 
 /* Improved search input (light & dark mode) */
-
-/* Improved search input (light & dark mode) */
 .search {
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(30,58,138,0.28);
+  border: 1px solid rgba(30,58,138,0.3);
   min-width: 220px;
-  background: #ffffff;
+  background: #fff;
   color: #1e293b;
-  box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   transition: all 200ms ease;
 }
-.search::placeholder { color: rgba(30,58,138,0.53); }
 .search:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
 }
 body.dark .search {
   background: #162032;
   color: #e6eefb;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.15);
 }
+body.dark .search:focus {
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.35);
+}
+
+/* ==== Redesigned Patient Modal ==== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+}
+.modal.show { display: flex; }
+
+.modal .card {
+  background: var(--card);
+  border-radius: 12px;
+  width: 85%;
+  max-width: 1200px;
+  max-height: 90%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+.modal-header-bar {
+  background: var(--primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.patient-header-info { display: flex; flex-direction: column; gap: 2px; }
+.patient-name { font-size: 18px; font-weight: 700; }
+.patient-subinfo { font-size: 13px; opacity: 0.85; }
+
+.patient-header-actions { display: flex; align-items: center; gap: 8px; }
+.btn-close {
+  background: transparent;
+  border: 0;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+#printRecordBtn {
+  background: white;
+  color: var(--primary);
+  font-weight: 600;
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+#printRecordBtn:hover { background: #e0e7ff; }
+body.dark #printRecordBtn { background: #1d4ed8; color: white; }
+#modalBody { padding: 20px; overflow-y: auto; background: var(--bg); }
+
+/* Tabs */
+.tab-bar {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+}
+.tab-bar button {
+  background: transparent;
+  border: 0;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 6px 12px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-bar button.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tab-bar button:hover { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -499,7 +592,18 @@ body.dark .search {
 </div>
 <!-- Modal -->
 <button class="btn-ghost" id="printRecordBtn" style="position:absolute;top:12px;right:60px;z-index:200;">🖨️ Print Record</button>
-<div class="modal" id="modal"><div class="card"><button class="btn btn-ghost" id="printRecordBtn" style="float:right;margin-right:8px;display:none;">🖨️ Print Record</button><button onclick="closeModal()" style="float:right;background:transparent;border:0;font-size:18px;cursor:pointer">✕</button><div id="modalBody"></div></div></div>
+<div class="modal" id="modal"><div class="card">
+<div class="modal-header-bar">
+<div class="patient-header-info">
+<div class="patient-name" id="modalPatientName">Patient Name</div>
+<div class="patient-subinfo" id="modalPatientSub">Status / Room</div>
+</div>
+<div class="patient-header-actions">
+<button class="btn btn-ghost" id="printRecordBtn">🖨️ Print Record</button>
+<button class="btn btn-close" onclick="closeModal()">✕</button>
+</div>
+</div>
+<div id="modalBody"></div></div></div>
 <!-- Toast -->
 <div id="toast"></div>
 <!-- Loading -->
@@ -939,52 +1043,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-</script><script>
-// Print Record in modal (Doctor only) with header and footer.
-(function(){
-  function setupPrintButton(){
-    const btn = document.getElementById('printRecordBtn');
-    if(!btn) return;
-    btn.style.display = 'none';
-    try {
-      if (typeof currentRole !== 'undefined' && currentRole === 'doctor') {
-        btn.style.display = 'none';
-      }
-    } catch(e){}
-
-    btn.addEventListener('click', function(){
-      const modalBody = document.getElementById('modalBody');
-      const header = document.querySelector('.print-header');
-      if(!modalBody) { alert('Nothing to print'); return; }
-      const win = window.open('', '_blank', 'width=900,height=700');
-      win.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Patient Record</title>');
-      win.document.write('<style>body{font-family:Inter,Arial,sans-serif;margin:20px;color:#111} h2{color:#1E3A8A;text-align:center} table{width:100%;border-collapse:collapse} table th, table td{padding:8px;border:1px solid #ddd;text-align:left} .section{margin-bottom:14px;text-align:left} footer{text-align:center;margin-top:30px;font-size:12px;color:#555}</style>');
-      win.document.write('</head><body>');
-      if(header) win.document.write(header.outerHTML);
-      win.document.write(modalBody.outerHTML);
-      win.document.write('<footer>Generated by ONE CARE EHR — Olivarez College Tagaytay</footer>');
-      win.document.write('</body></html>');
-      win.document.close();
-      setTimeout(()=>{ try{ win.focus(); win.print(); win.close(); }catch(e){} }, 350);
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', setupPrintButton);
-  const modal = document.getElementById('modal');
-  if(modal){
-    const observer = new MutationObserver(() => {
-      const btn = document.getElementById('printRecordBtn');
-      if(!btn) return;
-      try {
-        if (typeof currentRole !== 'undefined' && currentRole === 'doctor') {
-          btn.style.display = modal.classList.contains('show') ? '' : 'none';
-        } else {
-          btn.style.display = 'none';
-        }
-      } catch(e){}
-    });
-    observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
-  }
-})();
 </script></body>
 </html>
