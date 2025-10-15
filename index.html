@@ -272,6 +272,32 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
   border-bottom-color: var(--primary);
 }
 .tab-bar button:hover { color: var(--accent); }
+
+/* Enhanced form field visibility (hospital-style) */
+input, select, textarea {
+  border: 1.5px solid rgba(52,64,84,0.18);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #ffffff;
+  color: #0f1724;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+}
+body.dark input, body.dark select, body.dark textarea {
+  background: #0f1724;
+  border-color: rgba(255,255,255,0.08);
+  color: #e6eefb;
+}
+label { font-weight:700; font-size:13px; color:var(--muted); }
+.row { display:flex; gap:12px; margin-bottom:10px; }
+.row .full { flex: 1 1 100%; }
+.row > div { flex: 1 1 50%; }
+.actions { display:flex; gap:8px; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -369,30 +395,49 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <label>Full name *</label><input name="name" placeholder="Last, First Middle" required=""/>
 </div>
 <div>
-<label>Civil Status</label>
-<select name="civilStatus"><option value="">--</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select>
+<label>Age</label><input min="0" name="age" placeholder="Age (years)" type="number"/>
 </div>
-</div>
-<div class="row">
-<div><label>Date of Birth</label><input name="dob" type="date"/></div>
-<div><label>Place of Birth</label><input name="placeOfBirth"/></div>
-</div>
-<div class="row">
-<div><label>Nationality</label><input name="nationality"/></div>
-<div><label>Contact Number</label><input name="contact"/></div>
-</div>
-<div class="row">
-<div><label>Patient Status</label>
-<select name="patientStatus"><option>Inpatient</option><option>Outpatient</option></select>
-</div>
-<div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3"/></div>
-</div>
-<div class="row">
-<div><label>Bed No.</label><input name="bedNo"/></div>
-<div><label>Date of Admission</label><input name="admissionDate" type="date"/></div>
 </div>
 <div class="row">
 <div class="full">
+<label>Address</label><input name="address" placeholder="Street, City, Province"/>
+</div>
+</div>
+<div class="row">
+<div>
+<label>Sex</label>
+<select name="sex">
+<option value="">-- Select --</option>
+<option>Male</option>
+<option>Female</option>
+<option>Prefer not to say</option>
+</select>
+</div>
+<div>
+<label>Religion</label>
+<select name="religion">
+<option value="">-- Select --</option>
+<option>Catholic</option>
+<option>Christian</option>
+<option>Muslim</option>
+<option>Iglesia</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<div class="row">
+<div>
+<label>Height (cm)</label><input id="info_height" min="0" name="height" placeholder="e.g., 170" type="number"/>
+</div>
+<div>
+<label>Weight (kg)</label><input id="info_weight" min="0" name="weight" placeholder="e.g., 70" type="number"/>
+</div>
+</div>
+<div class="row">
+<div>
+<label>BMI</label><input id="info_bmi" name="bmi" placeholder="Auto-calculated" readonly=""/>
+</div>
+<div>
 <label>Initial / Primary Diagnosis *</label>
 <input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required=""/>
 </div>
@@ -400,9 +445,6 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <div class="row">
 <div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name"/></div>
 <div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission"/></div>
-</div>
-<div class="row full">
-<label>Address</label><input name="address"/>
 </div>
 <div class="actions">
 <button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
@@ -415,17 +457,27 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <h3>2 • Identification &amp; Insurance</h3>
 <form id="form-id">
 <div class="row">
+<div>
+<label>PhilHealth #</label><input name="philhealth" placeholder="e.g., 12-345678901-2"/>
+</div>
+<div>
+<label>PhilHealth Type</label>
+<select name="philType">
+<option value="">-- Select --</option>
+<option>Member</option>
+<option>Dependent</option>
+<option>Indigent</option>
+<option>Sponsored</option>
+<option>Lifetime Member</option>
+<option>OFW</option>
+</select>
+</div>
+</div>
+<div class="row">
 <div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
 <div><label>Government ID Number</label><input name="govIdNo"/></div>
 </div>
-<div class="row">
-<div><label>PhilHealth #</label><input name="philhealth"/></div>
-<div><label>PhilHealth Type</label><input name="philType"/></div>
-</div>
-<div class="row">
-<div><label>HMO / Insurance Provider</label><input name="hmo"/></div>
-<div><label>Policy / Membership #</label><input name="policyNo"/></div>
-</div>
+
 <div class="actions">
 <button class="btn btn-primary" data-save="id" type="button">💾 Save ID &amp; Insurance</button>
 <button class="btn btn-ghost" id="clearID" type="button">Clear</button>
@@ -557,6 +609,15 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <div class="row full">
 <label>Other monitoring notes</label><textarea name="monitorNotes"></textarea>
 </div>
+
+<div class="row" style="margin-top:8px">
+<div>
+<label>Intake (ml)</label><input id="inputMl" min="0" name="inputMl" placeholder="e.g., 2000" type="number"/>
+</div>
+<div>
+<label>Output (ml)</label><input id="outputMl" min="0" name="outputMl" placeholder="e.g., 1800" type="number"/>
+</div>
+</div>
 <div class="actions">
 <button class="btn btn-primary" data-save="vitals" id="saveVitalsBtn" type="button">💾 Save Vitals</button>
 <button class="btn btn-ghost" id="clearVitals" type="button">Clear</button>
@@ -614,412 +675,48 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 <script>
-/* =========================
-   Firebase initialization
-   ========================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyAojqcg_UGpamJjTJHb6H-BRoVF5mDZgrU",
-  authDomain: "one-care-system.firebaseapp.com",
-  projectId: "one-care-system",
-  storageBucket: "one-care-system.appspot.com",
-  messagingSenderId: "982635756225",
-  appId: "1:982635756225:web:c664f162b735b56703f240",
-  measurementId: "G-CB5Y0R9K90"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
-
-/* =========================
-   App state
-   ========================= */
-let selectedPatientId = null;
-let patients = [];
-let vitalsRows = [];
-let uploadedLabs = []; // { name, url, type }
-let currentUser = null;
-let currentRole = 'guest'; // 'admin' | 'doctor' | 'nurse' | 'guest'
-let isSaving = false;
-
-/* =========================
-   Helpers
-   ========================= */
-function el(id){ return document.getElementById(id); }
-function showToast(msg, ms=3000){ const t = el('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(()=> t.style.display = 'none', ms); }
-function showLoading(show=true){ const l = el('loading'); if(show) l.classList.add('show'); else l.classList.remove('show'); }
-function escapeHtml(s){ if(!s && s!==0) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-function readForm(formEl){ const fd = new FormData(formEl); const obj = {}; for(const [k,v] of fd.entries()) obj[k]=v; return obj; }
-
-/* =========================
-   Dark mode & Sidebar persistence
-   ========================= */
-function applyPreferredTheme(){
-  const pref = localStorage.getItem('ocs_theme') || 'light';
-  if(pref === 'dark'){ document.body.classList.add('dark'); el('darkToggle').textContent = '☀️'; } else { document.body.classList.remove('dark'); el('darkToggle').textContent = '🌙'; }
-}
-applyPreferredTheme();
-document.getElementById('darkToggle').addEventListener('click', ()=>{
-  document.body.classList.toggle('dark');
-  const dark = document.body.classList.contains('dark');
-  localStorage.setItem('ocs_theme', dark ? 'dark' : 'light');
-  document.getElementById('darkToggle').textContent = dark ? '☀️' : '🌙';
-});
-
-/* sidebar toggle */
-document.getElementById('sidebarToggle').addEventListener('click', ()=>{
-  document.body.classList.toggle('sidebar-collapsed');
-  localStorage.setItem('ocs_sidebar_collapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
-});
-if(localStorage.getItem('ocs_sidebar_collapsed')==='1') document.body.classList.add('sidebar-collapsed');
-
-/* =========================
-   Auth: sign in / sign out
-   ========================= */
-el('btnLogin').addEventListener('click', async ()=>{
-  const email = el('loginEmail').value.trim();
-  const pass = el('loginPass').value;
-  el('loginError').style.display='none';
-  if(!email || !pass){ el('loginError').textContent='Please enter email & password.'; el('loginError').style.display='block'; return; }
-  try{ await auth.signInWithEmailAndPassword(email, pass); }catch(e){ el('loginError').textContent = e.message || 'Login failed'; el('loginError').style.display='block'; }
-});
-
-el('btnLogout').addEventListener('click', async ()=>{ try{ await auth.signOut(); location.reload(); } catch(e){ alert('Logout failed: '+(e.message||e.code)); } });
-
-el('btnHelp').addEventListener('click', ()=>{ alert('Role setup guide: Add users to Firestore "users" collection with fields { email: "...", role: "admin|doctor|nurse" }'); });
-
-/* onAuth state */
-auth.onAuthStateChanged(async user => {
-  if(user){
-    currentUser = user;
-    // determine role from 'users' collection by email
-    try{
-      const uq = await db.collection('users').where('email','==', user.email).limit(1).get();
-      if(!uq.empty){
-        const doc = uq.docs[0]; const data = doc.data();
-        currentRole = (data && data.role) ? data.role.toLowerCase() : 'guest';
-      } else {
-        currentRole = 'guest';
-      }
-    }catch(e){
-      console.error('Failed to read user role', e);
-      currentRole = 'guest';
-    }
-
-    // show app
-    el('loginScreen').style.display = 'none';
-    el('app').style.display = 'block';
-    document.querySelector('header').style.display = 'flex';
-
-    // show user info + role
-    const ui = el('userInfo'); ui.innerHTML = '';
-    const b = document.createElement('div'); b.style.padding='6px 10px'; b.style.borderRadius='999px'; b.style.background= 'linear-gradient(90deg,var(--accent),#0b5cff)'; b.style.color='white'; b.style.fontWeight='700'; b.textContent='USER'; ui.appendChild(b);
-    const e = document.createElement('div'); e.style.marginLeft='8px'; e.style.fontWeight='600'; e.innerHTML = `<div>${user.email}</div><div style="font-size:12px;opacity:0.9">${currentRole.toUpperCase()}</div>`; ui.appendChild(e);
-
-    // apply role-specific UI
-    applyRoleUI(currentRole);
-
-    await loadPatients();
-    document.querySelector('.navbtn[data-target="tab-dashboard"]').click();
-  } else {
-    currentUser = null; currentRole = 'guest';
-    el('loginScreen').style.display='flex'; el('app').style.display = 'none'; document.querySelector('header').style.display = 'none';
-  }
-});
-
-/* applyRoleUI: hide/disable elements based on role */
-function applyRoleUI(role){
-  // Default: hide everything restricted, then reveal as needed
-  // New Patient button: only admin
-  if(role !== 'admin') el('btnNew').classList.add('role-hidden'); else el('btnNew').classList.remove('role-hidden');
-
-  // In patient cards: delete buttons will only be rendered for admin (render logic checks currentRole)
-  // Edit: admin and doctor can edit; nurse cannot (nurses can still access vitals tab)
-  // Notes: doctor can edit doctor notes; nurse cannot
-  // On UI, disable doctorNotes if nurse
-  if(role === 'nurse'){
-    el('doctorNotes').setAttribute('disabled','true');
-    el('saveNotesBtn').dataset.forRole = 'nurse';
-  } else {
-    el('doctorNotes').removeAttribute('disabled');
-    delete el('saveNotesBtn').dataset.forRole;
-  }
-}
-
-/* =========================
-   Navigation
-   ========================= */
-const navBtns = document.querySelectorAll('.navbtn');
-const pages = document.querySelectorAll('.tab-page');
-navBtns.forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    navBtns.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const t = btn.dataset.target;
-    pages.forEach(p=> p.style.display = (p.id===t ? 'block' : 'none'));
-    window.scrollTo(0,0);
-  });
-});
-
-/* =========================
-   Vitals handling + BMI
-   ========================= */
-function calculateBMI(){ const w = parseFloat(el('v_weight').value); const hcm = parseFloat(el('v_height').value); if(!isFinite(w) || !isFinite(hcm) || hcm<=0){ el('v_bmi').value=''; return; } const h = hcm/100; const bmi = w/(h*h); el('v_bmi').value = bmi.toFixed(1); }
-['v_weight','v_height'].forEach(id=>{ const e = document.getElementById(id); if(e) e.addEventListener('input', calculateBMI); });
-
-el('btnAddVitals').addEventListener('click', ()=>{
-  const f = el('form-vitals');
-  const row = { date: f.v_date.value || '', time: f.v_time.value || '', temp: f.v_temp.value || '', pulse: f.v_pulse.value || '', rr: f.v_rr.value || '', bp: f.v_bp.value || '', spo2: f.v_spo2.value || '', pain: f.v_pain.value || '', weight: f.v_weight.value || '', height: f.v_height.value || '', bmi: f.v_bmi.value || '', by: f.v_by.value || '', note: f.monitorNotes ? f.monitorNotes.value : '' };
-  if(!row.date && !row.time && !row.temp && !row.bp && !row.pulse){ if(!confirm('Add empty vitals row?')) return; }
-  vitalsRows.push(row); renderVitalsTable();
-  f.v_temp.value=''; f.v_pulse.value=''; f.v_rr.value=''; f.v_bp.value=''; f.v_spo2.value=''; f.v_pain.value=''; f.v_weight.value=''; f.v_height.value=''; f.v_bmi.value=''; f.v_time.value='';
-});
-function renderVitalsTable(){ const tbody = el('vitalsTableBody'); tbody.innerHTML=''; vitalsRows.forEach((r,i)=>{ const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.time)}</td><td>${escapeHtml(r.temp)}</td><td>${escapeHtml(r.pulse)}</td><td>${escapeHtml(r.rr)}</td><td>${escapeHtml(r.bp)}</td><td>${escapeHtml(r.spo2)}</td><td>${escapeHtml(r.pain)}</td><td>${escapeHtml(r.by)}</td><td>${escapeHtml(r.note)}</td><td><button class="btn btn-ghost" onclick="removeVitalsRow(${i})">Del</button></td>`; tbody.appendChild(tr); }); }
-window.removeVitalsRow = function(i){ vitalsRows.splice(i,1); renderVitalsTable(); }
-
-/* =========================
-   Lab upload (Storage) + preview
-   ========================= */
-const labInput = el('labFileInput');
-const labFilesList = el('labFilesList');
-el('uploadLabBtn').addEventListener('click', async ()=>{
-  const file = labInput.files[0]; if(!file){ alert('Select a file first.'); return; }
-  try{
-    const path = `labs/${selectedPatientId || 'temp'}/${Date.now()}_${file.name}`;
-    const storageRef = storage.ref(path);
-    await storageRef.put(file);
-    const url = await storageRef.getDownloadURL();
-    uploadedLabs.push({ name: file.name, url, type: file.type || 'application/octet-stream' });
-    renderLabFiles(); labInput.value=''; showToast('Lab uploaded (preview ready).');
-  }catch(e){ alert('Upload failed: '+(e.message||e.code)); }
-});
-function renderLabFiles(){ labFilesList.innerHTML=''; if(uploadedLabs.length===0){ labFilesList.innerHTML = '<div class="small-muted">No lab files uploaded.</div>'; return; } uploadedLabs.forEach((f,i)=>{ const wrap = document.createElement('div'); wrap.className='lab-item'; const preview = (f.type && f.type.startsWith('image/')) ? `<img src="${f.url}" class="lab-thumb">` : `<div style="width:80px;height:80px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fbfdfe;border:1px solid rgba(0,0,0,0.04);font-size:13px">📄</div>`; wrap.innerHTML = `${preview}<div style="display:flex;gap:6px;align-items:center"><a href="${f.url}" target="_blank" style="font-size:12px;color:var(--primary);font-weight:700">View</a><button class="btn btn-ghost" onclick="removeLabFile(${i})">🗑️</button></div>`; labFilesList.appendChild(wrap); }); }
-window.removeLabFile = function(i){ uploadedLabs.splice(i,1); renderLabFiles(); }
-
-/* =========================
-   IV calculation
-   ========================= */
-function calculateIV(){ const vol = parseFloat(el('ivVolume').value); const timeHr = parseFloat(el('ivTime').value); const drop = parseFloat(el('ivDropFactor').value); if(isNaN(vol) || vol<=0 || isNaN(timeHr) || timeHr<=0){ el('ivFlowRate').value=''; return; } const mlPerHr = vol / timeHr; const timeMin = timeHr * 60; const gttPerMin = (!isNaN(drop) && drop>0) ? (vol * drop) / timeMin : null; let out = `${mlPerHr.toFixed(1)} mL/hr`; if(gttPerMin !== null) out += ` — ${Math.round(gttPerMin)} gtt/min`; el('ivFlowRate').value = out; }
-['ivVolume','ivTime','ivDropFactor'].forEach(id=>{ const e = document.getElementById(id); if(e) e.addEventListener('input', calculateIV); });
-
-/* =========================
-   Firestore: basic CRUD for patients & saves
-   ========================= */
-/* =========================
-   Role-based UI (Updated for full nurse access)
-   ========================= */
-function applyRoleUI(role) {
-  // 🩺 Admin, Doctor, and Nurse all have full access
-  if (role === 'admin' || role === 'doctor' || role === 'nurse') {
-    el('btnNew').classList.remove('role-hidden');
-    // Nurse can see everything but can't edit Doctor's notes
-    if (role === 'nurse') {
-      el('doctorNotes').setAttribute('disabled', 'true');
-    } else {
-      el('doctorNotes').removeAttribute('disabled');
-    }
-  } else {
-    // Guests: minimal access
-    el('btnNew').classList.add('role-hidden');
-    el('doctorNotes').setAttribute('disabled', 'true');
-  }
-}
-
-/* =========================
-   Firestore: CRUD + Search + Role-enhanced Access
-   ========================= */
-async function loadPatients() {
-  patients = [];
-  showLoading(true);
-  try {
-    const q = db.collection('patients').orderBy('updatedAt', 'desc');
-    const snap = await q.get();
-    snap.forEach(d => patients.push({ id: d.id, ...d.data() }));
-  } catch (e) {
-    console.error('Load patients failed', e);
-    showToast('Failed to load patients');
-  }
-  showLoading(false);
-  renderPatients();
-}
-
-/* 🔍 SEARCH: filter by name / physician / room */
-el('searchBoxTop').addEventListener('input', e => {
-  const term = e.target.value.trim().toLowerCase();
-  const filtered = term
-    ? patients.filter(p =>
-        [p.name, p.physician, p.roomNo]
-          .filter(Boolean)
-          .some(v => v.toLowerCase().includes(term))
-      )
-    : patients;
-  renderPatients(filtered);
-});
-
-/* Render patients (supports filtered list) */
-function renderPatients(list = patients) {
-  const container = el('patientsContainer');
-  container.innerHTML = '';
-  list.forEach((p, idx) => {
-    const card = document.createElement('div');
-    card.className = 'card patient-card';
-    card.innerHTML = `
-      <div style="width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent),#0b5cff);color:white;font-weight:800">
-        ${p.name ? p.name.split(' ').map(s => s[0]).slice(0,2).join('') : '--'}
-      </div>
-      <div class="meta">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <strong>${escapeHtml(p.name || '—')}</strong>
-            <div class="small-muted">${escapeHtml(p.address || '')}</div>
-          </div>
-          <div style="text-align:right">
-            <div>${p.patientStatus === 'Inpatient'
-              ? '<span class="badge in">Inpatient</span>'
-              : '<span class="badge out">Outpatient</span>'}</div>
-            <div class="small-muted" style="margin-top:6px">
-              ${p.updatedAt ? new Date(p.updatedAt.seconds * 1000).toLocaleString() : ''}
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
-          <div class="small-muted">${escapeHtml(((p.roomNo || '') + (p.bedNo ? ' / ' + p.bedNo : '')).trim() || '-')}</div>
-          <div class="small-muted">${escapeHtml(p.physician || '-')}</div>
-          <div class="small-muted">Last vitals: ${p.vitals && p.vitals.length
-              ? (escapeHtml(p.vitals[p.vitals.length - 1].temp || '-') + ' °C / ' + escapeHtml(p.vitals[p.vitals.length - 1].bp || '-'))
-              : '-'}</div>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <button class="icon-btn" title="View" onclick="viewPatient(${idx})">🔍</button>
-        ${(currentRole === 'admin' || currentRole === 'doctor' || currentRole === 'nurse')
-          ? `<button class="icon-btn" title="Edit" onclick="editPatient(${idx})">✏️</button>` : ''}
-        ${(currentRole === 'admin' || currentRole === 'doctor' || currentRole === 'nurse')
-          ? `<button class="icon-btn" title="Delete" onclick="deletePatient(${idx})">🗑️</button>` : ''}
-      </div>`;
-    container.appendChild(card);
-  });
-  el('count').innerText = list.length;
-}
-
-/* Save handlers — nurses restricted only from doctorNotes */
-const saveMap = { info:'form-info', id:'form-id', history:'form-history', labs:'form-labs', meds:'form-meds', vitals:'form-vitals', notes:'form-notes', plan:'form-plan' };
-document.querySelectorAll('[data-save]').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const tabKey = btn.dataset.save;
-    const fid = saveMap[tabKey];
-    if (!fid) return;
-    const form = el(fid);
-    const data = readForm(form);
-
-    if (tabKey === 'notes' && currentRole === 'nurse') {
-      const out = { nurseNotes: data.nurseNotes };
-      await saveTabData(btn, out);
-      return;
-    }
-
-    if (tabKey === 'vitals') data.vitals = vitalsRows.slice();
-    if (tabKey === 'labs' && uploadedLabs.length > 0) data.labFiles = uploadedLabs.slice();
-    if (tabKey === 'meds' && el('ivFlowRate').value) data.ivFlowRate = el('ivFlowRate').value;
-
-    if (tabKey === 'info' && (!data.name || !data.initialDiagnosis)) {
-      return showToast('Name and Initial Diagnosis are required.');
-    }
-
-    if (isSaving) return showToast('Save in progress...');
-    isSaving = true; btn.disabled = true;
-    try { await saveTabData(btn, data); }
-    catch (e) { alert('Save failed: ' + (e.message || e.code)); }
-    finally { isSaving = false; btn.disabled = false; }
-  });
-});
-
-/* Save data helper */
-async function saveTabData(btn, data) {
-  const meta = { updatedAt: firebase.firestore.FieldValue.serverTimestamp(), updatedBy: currentUser ? currentUser.email : '' };
-  if (!selectedPatientId) {
-    const created = await db.collection('patients').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp(), ...meta });
-    selectedPatientId = created.id;
-    showToast('Created new patient and saved.');
-  } else {
-    await db.collection('patients').doc(selectedPatientId).set({ ...data, ...meta }, { merge: true });
-    showToast('Saved.');
-  }
-  if (btn.dataset.save === 'labs') uploadedLabs = [];
-  await loadPatients();
-}
-
-
-/* =========================
-   New patient & Clear handlers
-   ========================= */
-el('btnNew').addEventListener('click', ()=>{ selectedPatientId = null; document.querySelectorAll('form').forEach(f=>f.reset()); vitalsRows=[]; uploadedLabs=[]; renderVitalsTable(); renderLabFiles(); showToast('Creating new patient. Fill Patient Info and Save Info to create record.'); document.querySelector('.navbtn[data-target="tab-info"]').click(); });
-
-['clearInfo','clearID','clearHistory','clearLabs','clearMeds','clearVitals','clearNotes','clearPlan'].forEach(id=>{ const node = document.getElementById(id); if(!node) return; node.addEventListener('click', ()=>{ const fid = 'form-'+id.replace('clear','').toLowerCase(); const f = document.getElementById(fid); if(f) f.reset(); if(id==='clearVitals'){ vitalsRows=[]; renderVitalsTable(); } if(id==='clearLabs'){ uploadedLabs=[]; renderLabFiles(); } }); });
-
-/* =========================
-   View / Edit / Delete patient
-   ========================= */
-window.viewPatient = function(index){ const p = patients[index]; if(!p) return alert('Patient not found'); el('modalBody').innerHTML = renderPatientHTML(p); el('modal').classList.add('show'); }
-window.editPatient = async function(index){
-  const p = patients[index]; if(!p) return alert('Patient not found');
-  selectedPatientId = p.id;
-
-  // Role-sensitive loading:
-  if(currentRole === 'nurse'){
-    // Nurses can only edit vitals and nurse notes — so only load those into their forms
-    vitalsRows = Array.isArray(p.vitals)?p.vitals.slice():[];
-    uploadedLabs = Array.isArray(p.labFiles)?p.labFiles.slice():[];
-    renderVitalsTable(); renderLabFiles();
-    // populate nurse notes only
-    const notesForm = el('form-notes');
-    if(notesForm) notesForm.elements['nurseNotes'].value = p.nurseNotes || '';
-    // switch to vitals tab
-    document.querySelector('.navbtn[data-target="tab-vitals"]').click();
-    showToast('Loaded vitals & nurse notes for editing.');
-    return;
-  }
-
-  // Admins & doctors: full load
-  loadIntoForm('form-info', p); loadIntoForm('form-id', p); loadIntoForm('form-history', p); loadIntoForm('form-labs', p); loadIntoForm('form-meds', p); loadIntoForm('form-notes', p); loadIntoForm('form-plan', p);
-  vitalsRows = Array.isArray(p.vitals)?p.vitals.slice():[];
-  uploadedLabs = Array.isArray(p.labFiles)?p.labFiles.slice():[];
-  renderVitalsTable(); renderLabFiles();
-  document.querySelector('.navbtn[data-target="tab-info"]').click();
-  showToast('Loaded patient for editing.');
-}
-window.deletePatient = async function(index){ if(!confirm('Delete this patient? This action cannot be undone.')) return; const id = patients[index].id; try{ await db.collection('patients').doc(id).delete(); await loadPatients(); showToast('Patient deleted.'); }catch(e){ alert('Delete failed: '+(e.message||e.code)); } }
-window.closeModal = function(){ el('modal').classList.remove('show'); }
-
-function loadIntoForm(formId, data){ const f = document.getElementById(formId); if(!f) return; Object.keys(data).forEach(k=>{ if(f.elements[k]) f.elements[k].value = data[k] || ''; }); }
-
-/* Renders patient details for modal */
-function renderPatientHTML(p){ const parts = []; parts.push(`<h3 style="margin-top:0">${escapeHtml(p.name||'-')} <small class="small-muted">ID: ${escapeHtml(p.id||'')}</small></h3>`);
+function renderPatientHTML(p){ 
+  const parts = []; 
+  parts.push(`<h3 style="margin-top:0">${escapeHtml(p.name||'-')} <small class="small-muted">ID: ${escapeHtml(p.id||'')}</small></h3>`);
   if(p.photoURL) parts.push(`<div style="margin-bottom:8px"><img src="${escapeHtml(p.photoURL)}" style="width:120px;height:120px;border-radius:12px;object-fit:cover;margin-bottom:10px;"></div>`);
-  parts.push(`<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px"><div><div class="small-muted">DOB</div><div>${escapeHtml(p.dob||'')}</div></div><div><div class="small-muted">Room / Bed</div><div>${escapeHtml(p.roomNo||'-')} ${p.bedNo?('/ '+escapeHtml(p.bedNo)):''}</div></div><div><div class="small-muted">Physician</div><div>${escapeHtml(p.physician||'-')}</div></div></div><hr>`);
+  parts.push(`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
+    <div>
+      <div class="small-muted">Age</div><div>${escapeHtml(p.age||'-')}</div>
+    </div>
+    <div>
+      <div class="small-muted">Address</div><div>${escapeHtml(p.address||'-')}</div>
+    </div>
+    <div>
+      <div class="small-muted">Sex</div><div>${escapeHtml(p.sex||'-')}</div>
+    </div>
+    <div>
+      <div class="small-muted">Religion</div><div>${escapeHtml(p.religion||'-')}</div>
+    </div>
+  </div><hr>`);
   function s(title, body){ return `<h4 style="margin:10px 0 6px 0;color:var(--primary)">${title}</h4><div style="margin-bottom:8px">${body||'<span class="small-muted">—</span>'}</div>`; }
+  var h = p.height || ''; var w = p.weight || ''; var bmiText = '';
+  if(h && w){
+    var hh = parseFloat(h); var ww = parseFloat(w);
+    if(isFinite(hh) && isFinite(ww) && hh>0){
+      var bmi = ww / ((hh/100)*(hh/100));
+      bmi = Math.round(bmi*10)/10;
+      var cat = '';
+      if(bmi < 18.5) cat = 'Underweight';
+      else if(bmi < 25) cat = 'Normal';
+      else if(bmi < 30) cat = 'Overweight';
+      else cat = 'Obese';
+      bmiText = bmi + ' — ' + cat;
+    }
+  }
   parts.push(s('Contact & Address', `<b>Contact:</b> ${escapeHtml(p.contact||'-')}<br/><b>Address:</b> ${escapeHtml(p.address||'-')}`));
   parts.push(s('Medical History', `<b>Present Illness:</b> ${escapeHtml(p.presentIllness||'-')}<br/><b>Past Hx:</b> ${escapeHtml(p.pastHx||'-')}`));
   parts.push(s('Medications / Orders', `<b>Med Orders:</b> ${escapeHtml(p.medOrders||'-')}<br/><b>IV Flow:</b> ${escapeHtml(p.ivFlowRate||'-')}`));
-  let vitHtml = '<table style="width:100%;border-collapse:collapse"><thead><tr><th>Date</th><th>Time</th><th>Temp</th><th>P</th><th>RR</th><th>BP</th><th>SpO₂</th><th>Pain</th><th>By</th></tr></thead><tbody>';
-  const vrows = p.vitals || [];
-  if(vrows.length === 0) vitHtml += '<tr><td colspan="9" style="text-align:center;color:#888">No vitals recorded</td></tr>';
-  else vrows.forEach(r => vitHtml += `<tr><td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.time)}</td><td>${escapeHtml(r.temp)}</td><td>${escapeHtml(r.pulse)}</td><td>${escapeHtml(r.rr)}</td><td>${escapeHtml(r.bp)}</td><td>${escapeHtml(r.spo2)}</td><td>${escapeHtml(r.pain)}</td><td>${escapeHtml(r.by)}</td></tr>`);
-  vitHtml += '</tbody></table>';
+  let vitHtml = '<div style="display:flex;gap:12px;flex-wrap:wrap"><div><div class="small-muted">Height</div><div>'+escapeHtml(p.height||'-')+'</div></div><div><div class="small-muted">Weight</div><div>'+escapeHtml(p.weight||'-')+'</div></div><div><div class="small-muted">BMI</div><div>'+escapeHtml(bmiText||'-')+'</div></div></div>';
   parts.push(s('Vitals', vitHtml));
   parts.push(s('Labs & Diagnostics', `<b>Ordered Tests:</b> ${escapeHtml(p.orderedTests||'-')}<br/><b>Results:</b> ${escapeHtml(p.testResults||'-')}`));
   if(p.labFiles && p.labFiles.length>0){ let labsHTML = '<div style="display:flex;flex-wrap:wrap;gap:10px">'; p.labFiles.forEach(f=>{ if(f.type && f.type.startsWith('image/')) labsHTML += `<div style="text-align:center"><img src="${escapeHtml(f.url)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px"><br><a href="${escapeHtml(f.url)}" target="_blank">View</a></div>`; else labsHTML += `<div><a href="${escapeHtml(f.url)}" target="_blank">📄 ${escapeHtml(f.name)}</a></div>`; }); labsHTML += '</div>'; parts.push(s('Uploaded Lab Files', labsHTML)); }
   parts.push(s('Notes & Plan', `<b>Nurse:</b> ${escapeHtml(p.nurseNotes||'-')}<br/><b>Doctor:</b> ${escapeHtml(p.doctorNotes||'-')}<br/><b>Plan:</b> ${escapeHtml(p.planCare||'-')}`));
   return parts.join(''); }
-
-/* =========================
-   Initial render helpers
-   ========================= */
-renderLabFiles(); renderVitalsTable();
-
-/* small safe UI: click brand to dashboard */
-document.getElementById('brand')?.addEventListener('click', ()=>{ document.querySelector('.navbtn[data-target="tab-dashboard"]').click(); });
-
 </script>
 <script>document.getElementById('printBtn').addEventListener('click', () => { window.print(); });</script><script>
 // === Print Record Function (Doctor only) ===
@@ -1043,5 +740,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+</script><script>
+// Instant BMI calculation in Patient Information form
+(function(){
+  function bmiCategory(v){
+    if(v === null || v === undefined || isNaN(v)) return '';
+    if(v < 18.5) return 'Underweight';
+    if(v < 25) return 'Normal';
+    if(v < 30) return 'Overweight';
+    return 'Obese';
+  }
+  function updateInfoBMI(){
+    try {
+      const h = parseFloat(document.getElementById('info_height')?.value) || 0;
+      const w = parseFloat(document.getElementById('info_weight')?.value) || 0;
+      const out = document.getElementById('info_bmi');
+      if(!out) return;
+      if(!h || !w){ out.value=''; out.style.color=''; return; }
+      const bmi = w / ((h/100)*(h/100));
+      const val = Math.round(bmi*10)/10;
+      const cat = bmiCategory(val);
+      out.value = val + (cat ? ' — ' + cat : '');
+      if(cat === 'Normal') out.style.color = '#16A34A';
+      else if(cat === 'Underweight') out.style.color = '#6B7280';
+      else if(cat === 'Overweight') out.style.color = '#F59E0B';
+      else if(cat === 'Obese') out.style.color = '#DC2626';
+      else out.style.color = '';
+    } catch(e){ console.error(e); }
+  }
+  document.addEventListener('input', function(e){
+    const id = e.target && e.target.id;
+    if(id === 'info_height' || id === 'info_weight') updateInfoBMI();
+  });
+  document.addEventListener('DOMContentLoaded', updateInfoBMI);
+})();
 </script></body>
 </html>
