@@ -161,6 +161,31 @@
   .print-header small { color: #334155; }
 }
 .print-header { display: none; }
+
+/* Improved search input (light & dark mode) */
+.search {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(30,58,138,0.3);
+  min-width: 220px;
+  background: #fff;
+  color: #1e293b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 200ms ease;
+}
+.search:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+}
+body.dark .search {
+  background: #162032;
+  color: #e6eefb;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+body.dark .search:focus {
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.35);
+}
 </style>
 </head>
 <body>
@@ -193,7 +218,6 @@
 <small>ONE CARE EHR System</small>
 <hr style="margin-top:10px;margin-bottom:20px;border:1px solid #1E3A8A;"/>
 </div>
-
 <header style="display:none;">
 <div class="brand" id="brand" title="Go to Dashboard">
 <div class="logo-wrap">
@@ -208,7 +232,7 @@
 <div class="sub">Olivarez College Tagaytay • Version 1.2</div>
 </div>
 </div>
-<div class="header-controls"><button class="btn-ghost" id="printBtn">🖨️ Print</button>
+<div class="header-controls">
 <input class="search" id="searchBoxTop" placeholder="Search name / physician / room..."/>
 <button class="btn btn-ghost" id="btnNew">➕ New Patient</button>
 <button class="btn-ghost" id="sidebarToggle" title="Toggle sidebar">☰</button>
@@ -481,6 +505,8 @@
 </div>
 </div>
 <!-- Modal -->
+
+<button class="btn-ghost" id="printRecordBtn" style="position:absolute;top:12px;right:60px;z-index:200;">🖨️ Print Record</button>
 <div class="modal" id="modal"><div class="card"><button onclick="closeModal()" style="float:right;background:transparent;border:0;font-size:18px;cursor:pointer">✕</button><div id="modalBody"></div></div></div>
 <!-- Toast -->
 <div id="toast"></div>
@@ -899,5 +925,27 @@ renderLabFiles(); renderVitalsTable();
 document.getElementById('brand')?.addEventListener('click', ()=>{ document.querySelector('.navbtn[data-target="tab-dashboard"]').click(); });
 
 </script>
-<script>document.getElementById('printBtn').addEventListener('click', () => { window.print(); });</script></body>
+<script>document.getElementById('printBtn').addEventListener('click', () => { window.print(); });</script><script>
+// === Print Record Function (Doctor only) ===
+document.addEventListener('DOMContentLoaded', () => {
+  const printBtn = document.getElementById('printRecordBtn');
+  if (currentRole !== 'doctor') {
+    if (printBtn) printBtn.style.display = 'none';
+  } else {
+    if (printBtn) printBtn.addEventListener('click', () => {
+      const patientModal = document.querySelector('.modal') || document.querySelector('.patient-detail') || document.body;
+      const header = document.querySelector('.print-header');
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write('<html><head><title>Patient Record</title>');
+      printWindow.document.write('<style>@media print{body{font-family:Inter,sans-serif;color:#000;background:#fff;} h2{color:#1E3A8A;}}</style>');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write(header.outerHTML);
+      printWindow.document.write(patientModal.outerHTML);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    });
+  }
+});
+</script></body>
 </html>
