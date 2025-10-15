@@ -710,78 +710,150 @@ function calculateIV(){ const vol = parseFloat(el('ivVolume').value); const time
 /* =========================
    Firestore: basic CRUD for patients & saves
    ========================= */
-async function loadPatients(){ patients = []; showLoading(true); try{ const q = db.collection('patients').orderBy('updatedAt','desc'); const snap = await q.get(); snap.forEach(d=> patients.push({ id:d.id, ...d.data() })); }catch(e){ console.error('Load patients failed', e); showToast('Failed to load patients'); } showLoading(false); renderPatients(); }
+/* =========================
+   Role-based UI (Updated for full nurse access)
+   ========================= */
+function applyRoleUI(role) {
+  // 🩺 Admin, Doctor, and Nurse all have full access
+  if (role === 'admin' || role === 'doctor' || role === 'nurse') {
+    el('btnNew').classList.remove('role-hidden');
+    // Nurse can see everything but can't edit Doctor's notes
+    if (role === 'nurse') {
+      el('doctorNotes').setAttribute('disabled', 'true');
+    } else {
+      el('doctorNotes').removeAttribute('disabled');
+    }
+  } else {
+    // Guests: minimal access
+    el('btnNew').classList.add('role-hidden');
+    el('doctorNotes').setAttribute('disabled', 'true');
+  }
+}
 
-function renderPatients(){ const container = el('patientsContainer'); container.innerHTML=''; patients.forEach((p,idx)=>{ const card = document.createElement('div'); card.className='card patient-card'; card.innerHTML = `<div style="width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent),#0b5cff);color:white;font-weight:800">${p.name?p.name.split(' ').map(s=>s[0]).slice(0,2).join(''):'--'}</div>
+/* =========================
+   Firestore: CRUD + Search + Role-enhanced Access
+   ========================= */
+async function loadPatients() {
+  patients = [];
+  showLoading(true);
+  try {
+    const q = db.collection('patients').orderBy('updatedAt', 'desc');
+    const snap = await q.get();
+    snap.forEach(d => patients.push({ id: d.id, ...d.data() }));
+  } catch (e) {
+    console.error('Load patients failed', e);
+    showToast('Failed to load patients');
+  }
+  showLoading(false);
+  renderPatients();
+}
+
+/* 🔍 SEARCH: filter by name / physician / room */
+el('searchBoxTop').addEventListener('input', e => {
+  const term = e.target.value.trim().toLowerCase();
+  const filtered = term
+    ? patients.filter(p =>
+        [p.name, p.physician, p.roomNo]
+          .filter(Boolean)
+          .some(v => v.toLowerCase().includes(term))
+      )
+    : patients;
+  renderPatients(filtered);
+});
+
+/* Render patients (supports filtered list) */
+function renderPatients(list = patients) {
+  const container = el('patientsContainer');
+  container.innerHTML = '';
+  list.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card patient-card';
+    card.innerHTML = `
+      <div style="width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,var(--accent),#0b5cff);color:white;font-weight:800">
+        ${p.name ? p.name.split(' ').map(s => s[0]).slice(0,2).join('') : '--'}
+      </div>
       <div class="meta">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>${escapeHtml(p.name||'—')}</strong><div class="small-muted">${escapeHtml(p.address||'')}</div></div>
+          <div>
+            <strong>${escapeHtml(p.name || '—')}</strong>
+            <div class="small-muted">${escapeHtml(p.address || '')}</div>
+          </div>
           <div style="text-align:right">
-            <div>${p.patientStatus === 'Inpatient' ? '<span class="badge in">Inpatient</span>' : '<span class="badge out">Outpatient</span>'}</div>
-            <div class="small-muted" style="margin-top:6px">${p.updatedAt ? new Date(p.updatedAt.seconds*1000).toLocaleString() : ''}</div>
+            <div>${p.patientStatus === 'Inpatient'
+              ? '<span class="badge in">Inpatient</span>'
+              : '<span class="badge out">Outpatient</span>'}</div>
+            <div class="small-muted" style="margin-top:6px">
+              ${p.updatedAt ? new Date(p.updatedAt.seconds * 1000).toLocaleString() : ''}
+            </div>
           </div>
         </div>
         <div style="display:flex;gap:12px;margin-top:8px;align-items:center">
-          <div class="small-muted">${escapeHtml(((p.roomNo||'') + (p.bedNo ? ' / '+p.bedNo : '')).trim() || '-')}</div>
-          <div class="small-muted">${escapeHtml(p.physician||'-')}</div>
-          <div class="small-muted">Last vitals: ${p.vitals && p.vitals.length ? (escapeHtml(p.vitals[p.vitals.length-1].temp||'-')+' °C / '+escapeHtml(p.vitals[p.vitals.length-1].bp||'-')) : '-'}</div>
+          <div class="small-muted">${escapeHtml(((p.roomNo || '') + (p.bedNo ? ' / ' + p.bedNo : '')).trim() || '-')}</div>
+          <div class="small-muted">${escapeHtml(p.physician || '-')}</div>
+          <div class="small-muted">Last vitals: ${p.vitals && p.vitals.length
+              ? (escapeHtml(p.vitals[p.vitals.length - 1].temp || '-') + ' °C / ' + escapeHtml(p.vitals[p.vitals.length - 1].bp || '-'))
+              : '-'}</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px">
         <button class="icon-btn" title="View" onclick="viewPatient(${idx})">🔍</button>
-        ${ (currentRole === 'admin' || currentRole === 'doctor') ? `<button class="icon-btn" title="Edit" onclick="editPatient(${idx})">✏️</button>` : '' }
-        ${ (currentRole === 'admin') ? `<button class="icon-btn" title="Delete" onclick="deletePatient(${idx})">🗑️</button>` : '' }
-      </div>`; container.appendChild(card); }); el('count').innerText = patients.length; }
+        ${(currentRole === 'admin' || currentRole === 'doctor' || currentRole === 'nurse')
+          ? `<button class="icon-btn" title="Edit" onclick="editPatient(${idx})">✏️</button>` : ''}
+        ${(currentRole === 'admin' || currentRole === 'doctor' || currentRole === 'nurse')
+          ? `<button class="icon-btn" title="Delete" onclick="deletePatient(${idx})">🗑️</button>` : ''}
+      </div>`;
+    container.appendChild(card);
+  });
+  el('count').innerText = list.length;
+}
 
-/* Save handlers for tabs
-   - respects role: nurses may only save nurseNotes & vitals (not doctorNotes)
-*/
+/* Save handlers — nurses restricted only from doctorNotes */
 const saveMap = { info:'form-info', id:'form-id', history:'form-history', labs:'form-labs', meds:'form-meds', vitals:'form-vitals', notes:'form-notes', plan:'form-plan' };
-document.querySelectorAll('[data-save]').forEach(btn=>{ btn.addEventListener('click', async ()=>{ const tabKey = btn.dataset.save; const fid = saveMap[tabKey]; if(!fid) return; const form = el(fid); const data = readForm(form);
+document.querySelectorAll('[data-save]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const tabKey = btn.dataset.save;
+    const fid = saveMap[tabKey];
+    if (!fid) return;
+    const form = el(fid);
+    const data = readForm(form);
 
-    // role-based restrictions on what gets saved
-    if(tabKey === 'notes' && currentRole === 'nurse'){
-      // Nurses can only save nurseNotes (prevent overwriting doctorNotes)
+    if (tabKey === 'notes' && currentRole === 'nurse') {
       const out = { nurseNotes: data.nurseNotes };
-      // but preserve doctorNotes by not including it in the merge
       await saveTabData(btn, out);
       return;
     }
 
-    if(tabKey==='vitals'){
-      // attach vitals array
-      data.vitals = vitalsRows.slice();
+    if (tabKey === 'vitals') data.vitals = vitalsRows.slice();
+    if (tabKey === 'labs' && uploadedLabs.length > 0) data.labFiles = uploadedLabs.slice();
+    if (tabKey === 'meds' && el('ivFlowRate').value) data.ivFlowRate = el('ivFlowRate').value;
+
+    if (tabKey === 'info' && (!data.name || !data.initialDiagnosis)) {
+      return showToast('Name and Initial Diagnosis are required.');
     }
-    if(tabKey==='labs' && uploadedLabs.length>0) data.labFiles = uploadedLabs.slice();
-    if(tabKey==='meds' && el('ivFlowRate').value) data.ivFlowRate = el('ivFlowRate').value;
 
-    // validation: info tab requires name + initialDiagnosis
-    if(tabKey==='info'){ if(!data.name || !data.initialDiagnosis){ return showToast('Name and Initial Diagnosis are required.'); } }
+    if (isSaving) return showToast('Save in progress...');
+    isSaving = true; btn.disabled = true;
+    try { await saveTabData(btn, data); }
+    catch (e) { alert('Save failed: ' + (e.message || e.code)); }
+    finally { isSaving = false; btn.disabled = false; }
+  });
+});
 
-    if(isSaving) return showToast('Save in progress...'); isSaving = true; btn.disabled=true;
-    try{
-      await saveTabData(btn, data);
-    }catch(e){ alert('Save failed: '+(e.message||e.code)); } finally{ isSaving=false; btn.disabled=false; }
-
-  }); });
-
-/* saveTabData: helper to perform Firestore save (create if new patient) */
-async function saveTabData(btn, data){
+/* Save data helper */
+async function saveTabData(btn, data) {
   const meta = { updatedAt: firebase.firestore.FieldValue.serverTimestamp(), updatedBy: currentUser ? currentUser.email : '' };
-  if(!selectedPatientId){
-    // create new patient record, but only allow creation if user is admin or doctor (we hide New Patient for non-admins)
-    // If attempted by non-admins, still create but mark createdByRole as currentRole (optional)
+  if (!selectedPatientId) {
     const created = await db.collection('patients').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp(), ...meta });
     selectedPatientId = created.id;
     showToast('Created new patient and saved.');
   } else {
-    // merge; nurse restricted saves already handled upstream
     await db.collection('patients').doc(selectedPatientId).set({ ...data, ...meta }, { merge: true });
     showToast('Saved.');
   }
-  if(btn.dataset.save === 'labs') uploadedLabs = [];
+  if (btn.dataset.save === 'labs') uploadedLabs = [];
   await loadPatients();
 }
+
 
 /* =========================
    New patient & Clear handlers
