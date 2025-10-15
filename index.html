@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>ONE CARE SYSTEM — v1.2</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
   :root{
     --bg: #F6F9FC;
@@ -140,384 +141,356 @@
     cursor: not-allowed;
   }
 
+
+/* Printable format for patient records */
+@media print {
+  header, .btn, .search, .nav, #darkToggle { display: none !important; }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .print-header h2 {
+    margin: 0;
+    color: #1E3A8A;
+  }
+  .print-header small { color: #334155; }
+}
+.print-header { display: none; }
 </style>
 </head>
 <body>
-
 <!-- LOGIN -->
 <div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
-  <div class="card" style="max-width:460px;width:100%">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-      <div class="logo-wrap" style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">🩺</div>
-      <div>
-        <div class="title">ONE CARE SYSTEM</div>
-        <div class="sub">Sign in with your email</div>
-      </div>
-    </div>
-
-    <div style="margin-top:8px">
-      <input id="loginEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,58,138,0.06);margin-bottom:8px">
-      <input id="loginPass" type="password" placeholder="Password" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,58,138,0.06)">
-    </div>
-
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button id="btnLogin" class="btn btn-primary">Sign in</button>
-      <button id="btnHelp" class="btn btn-ghost">Help</button>
-    </div>
-
-    <div id="loginError" class="sub" style="color:var(--gold);margin-top:8px;display:none"></div>
-
-    <div style="margin-top:12px" class="small-muted">Don't have an account? Ask your Admin to create one and add role in Firestore.</div>
-  </div>
+<div class="card" style="max-width:460px;width:100%">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+<div class="logo-wrap" style="width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff">🩺</div>
+<div>
+<div class="title">ONE CARE SYSTEM</div>
+<div class="sub">Sign in with your email</div>
 </div>
-
+</div>
+<div style="margin-top:8px">
+<input id="loginEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,58,138,0.06);margin-bottom:8px"/>
+<input id="loginPass" placeholder="Password" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,58,138,0.06)" type="password"/>
+</div>
+<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn btn-primary" id="btnLogin">Sign in</button>
+<button class="btn btn-ghost" id="btnHelp">Help</button>
+</div>
+<div class="sub" id="loginError" style="color:var(--gold);margin-top:8px;display:none"></div>
+<div class="small-muted" style="margin-top:12px">Don't have an account? Ask your Admin to create one and add role in Firestore.</div>
+</div>
+</div>
 <!-- APP -->
-<div id="app" style="display:none" class="page">
-  <header style="display:none;">
-    <div class="brand" id="brand" title="Go to Dashboard">
-      <div class="logo-wrap">
-        <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <path d="M32 56s-20-12-24-19C3.8 29 3.6 20.4 9 15c5.6-5.4 13-3 17 0 4-3 11-5 17 0 4 3 11 6.4 16 0 5.2 5.4 5.2 14 1 22-4 7-24 20-24 20z" fill="#1E3A8A"/>
-          <rect x="28" y="22" width="8" height="16" rx="1.5" fill="#FBBF24"/>
-          <rect x="22" y="28" width="20" height="8" rx="1.5" fill="#FBBF24"/>
-        </svg>
-      </div>
-      <div>
-        <div class="title">ONE CARE <span style="color:var(--gold)">SYSTEM</span></div>
-        <div class="sub">Olivarez College Tagaytay • Version 1.2</div>
-      </div>
-    </div>
-
-    <div class="header-controls">
-      <input id="searchBoxTop" class="search" placeholder="Search name / physician / room...">
-      <button id="btnNew" class="btn btn-ghost">➕ New Patient</button>
-      <button id="sidebarToggle" class="btn-ghost" title="Toggle sidebar">☰</button>
-      <button id="darkToggle" class="btn-ghost" title="Toggle dark mode">🌙</button>
-      <div id="userInfo" style="display:flex;align-items:center;gap:8px"></div>
-      <button id="btnLogout" class="btn btn-ghost">Logout</button>
-    </div>
-  </header>
-
-  <div class="layout">
-    <aside>
-      <nav>
-        <button class="navbtn active" data-target="tab-dashboard">Dashboard</button>
-        <button class="navbtn" data-target="tab-info">1 • Patient Information</button>
-        <button class="navbtn" data-target="tab-id">2 • Identification & Insurance</button>
-        <button class="navbtn" data-target="tab-history">3 • Medical History</button>
-        <button class="navbtn" data-target="tab-labs">4 • Laboratory & Diagnostics</button>
-        <button class="navbtn" data-target="tab-meds">5 • Med Orders / I&O</button>
-        <button class="navbtn" data-target="tab-vitals">6 • Vitals & Monitoring</button>
-        <button class="navbtn" data-target="tab-notes">7 • Nurse / Doctor Notes</button>
-        <button class="navbtn" data-target="tab-plan">8 • Plan of Care</button>
-      </nav>
-      <div style="margin-top:12px" class="small-muted">Tip: Save each tab to persist to the selected patient. Use New Patient to create a fresh record.</div>
-    </aside>
-
-    <main>
-      <!-- Dashboard -->
-      <section id="tab-dashboard" class="card tab-page">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h3 style="margin:0">Dashboard</h3>
-            <div class="small-muted">Manage patient records — refined view</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="small-muted">Records: <strong id="count">0</strong></div>
-            <select id="sortSelect" style="padding:8px;border-radius:8px;border:1px solid rgba(30,58,138,0.06)">
-              <option value="updatedAt_desc">Sort: Recent</option>
-              <option value="name_asc">Sort: Name A–Z</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap" id="patientsContainer"></div>
-      </section>
-
-      <!-- Patient Info -->
-      <section id="tab-info" class="card tab-page" style="display:none">
-        <h3>1 • Patient Information</h3>
-        <form id="form-info">
-          <div class="row">
-            <div>
-              <label>Full name *</label><input name="name" placeholder="Last, First Middle" required>
-            </div>
-            <div>
-              <label>Civil Status</label>
-              <select name="civilStatus"><option value="">--</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div><label>Date of Birth</label><input name="dob" type="date"></div>
-            <div><label>Place of Birth</label><input name="placeOfBirth"></div>
-          </div>
-
-          <div class="row">
-            <div><label>Nationality</label><input name="nationality"></div>
-            <div><label>Contact Number</label><input name="contact"></div>
-          </div>
-
-          <div class="row">
-            <div><label>Patient Status</label>
-              <select name="patientStatus"><option>Inpatient</option><option>Outpatient</option></select>
-            </div>
-            <div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3"></div>
-          </div>
-
-          <div class="row">
-            <div><label>Bed No.</label><input name="bedNo"></div>
-            <div><label>Date of Admission</label><input name="admissionDate" type="date"></div>
-          </div>
-
-          <div class="row">
-            <div class="full">
-              <label>Initial / Primary Diagnosis *</label>
-              <input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required>
-            </div>
-          </div>
-
-          <div class="row">
-            <div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name"></div>
-            <div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission"></div>
-          </div>
-
-          <div class="row full">
-            <label>Address</label><input name="address">
-          </div>
-
-          <div class="actions">
-            <button type="button" id="saveInfoBtn" class="btn btn-primary" data-save="info">💾 Save Info</button>
-            <button type="button" id="clearInfo" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Identification -->
-      <section id="tab-id" class="card tab-page" style="display:none">
-        <h3>2 • Identification & Insurance</h3>
-        <form id="form-id">
-          <div class="row">
-            <div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"></div>
-            <div><label>Government ID Number</label><input name="govIdNo"></div>
-          </div>
-
-          <div class="row">
-            <div><label>PhilHealth #</label><input name="philhealth"></div>
-            <div><label>PhilHealth Type</label><input name="philType"></div>
-          </div>
-
-          <div class="row">
-            <div><label>HMO / Insurance Provider</label><input name="hmo"></div>
-            <div><label>Policy / Membership #</label><input name="policyNo"></div>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn-primary" data-save="id">💾 Save ID & Insurance</button>
-            <button type="button" id="clearID" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Medical History -->
-      <section id="tab-history" class="card tab-page" style="display:none">
-        <h3>3 • Medical History</h3>
-        <form id="form-history">
-          <div class="row full">
-            <label>Present Illness / Chief Complaint</label><textarea name="presentIllness"></textarea>
-          </div>
-
-          <div class="row full">
-            <label>Past Medical History</label><textarea name="pastHx" placeholder="Chronic illnesses, surgeries"></textarea>
-          </div>
-
-          <div class="row">
-            <div><label>Family Medical History</label><textarea name="familyHx"></textarea></div>
-            <div><label>Current Medications</label><textarea name="currentMeds"></textarea></div>
-          </div>
-
-          <div class="row">
-            <div><label>Immunization History</label><input name="immunization"></div>
-            <div><label>Lifestyle & Vocational History</label><input name="lifestyle"></div>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn-primary" data-save="history">💾 Save Medical History</button>
-            <button type="button" id="clearHistory" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Labs -->
-      <section id="tab-labs" class="card tab-page" style="display:none">
-        <h3>4 • Laboratory & Diagnostics</h3>
-        <form id="form-labs">
-          <div class="row full">
-            <label>Ordered Tests / Imaging</label><textarea name="orderedTests"></textarea>
-          </div>
-          <div class="row full">
-            <label>Results / Interpretation</label><textarea name="testResults"></textarea>
-          </div>
-
-          <div class="row full">
-            <label>Upload Lab Result (image or PDF)</label>
-            <input type="file" id="labFileInput" accept="image/*,.pdf">
-            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-              <button type="button" class="btn btn-primary" id="uploadLabBtn">⬆️ Upload</button>
-              <div class="small-muted">Files uploaded will be previewed and saved to patient when you Save Labs.</div>
-            </div>
-            <div id="labFilesList" style="margin-top:10px;display:flex;flex-wrap:wrap"></div>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn-primary" data-save="labs">💾 Save Labs</button>
-            <button type="button" id="clearLabs" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Meds / IV -->
-      <section id="tab-meds" class="card tab-page" style="display:none">
-        <h3>5 • Medication Orders / I&O</h3>
-        <form id="form-meds">
-          <div class="row full">
-            <label>Medication Orders (drug - dose - route - freq)</label><textarea name="medOrders"></textarea>
-          </div>
-
-          <div class="row">
-            <div><label>IV Lines / Fluids</label><input name="ivFluids"></div>
-            <div><label>Fluid Rate / Notes</label><input name="ivNotes"></input></div>
-          </div>
-
-          <div class="row">
-            <div><label>Input (ml)</label><input name="inputMl" type="number" min="0"></div>
-            <div><label>Output (ml)</label><input name="outputMl" type="number" min="0"></div>
-          </div>
-
-          <div class="row full" style="margin-top:6px">
-            <div>
-              <label>Volume to Infuse (mL)</label>
-              <input name="ivVolume" id="ivVolume" type="number" min="0" step="any" placeholder="e.g., 1000">
-            </div>
-            <div>
-              <label>Infusion Time (hours)</label>
-              <input name="ivTime" id="ivTime" type="number" min="0" step="any" placeholder="e.g., 8">
-            </div>
-          </div>
-
-          <div class="row full">
-            <div>
-              <label>Drop Factor (gtt/mL) — for gravity sets (optional)</label>
-              <input name="ivDropFactor" id="ivDropFactor" type="number" min="0" step="any" placeholder="e.g., 15">
-            </div>
-            <div>
-              <label>Flow Rate (auto)</label>
-              <input name="ivFlowRate" id="ivFlowRate" readonly placeholder="Auto-calculated (mL/hr or gtt/min)">
-              <div class="iv-help">Auto-calculated as you type. Results show mL/hr and gtt/min (if drop factor provided).</div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn-primary" data-save="meds">💾 Save Orders / I&O</button>
-            <button type="button" id="clearMeds" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Vitals -->
-      <section id="tab-vitals" class="card tab-page" style="display:none">
-        <h3>6 • Vitals & Monitoring</h3>
-        <form id="form-vitals">
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-            <input name="v_date" type="date" style="flex:1;min-width:140px">
-            <input name="v_time" type="time" style="flex:1;min-width:120px">
-            <input name="v_by" placeholder="Recorded by (initials)" style="flex:1;min-width:120px">
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
-            <input name="v_temp" placeholder="Temp (°C)">
-            <input name="v_pulse" placeholder="Pulse (bpm)">
-            <input name="v_rr" placeholder="RR (breaths/min)">
-            <input name="v_bp" placeholder="BP (e.g., 120/80)">
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
-            <input name="v_spo2" placeholder="SpO₂ (% )">
-            <input name="v_pain" placeholder="Pain (0–10)">
-            <input name="v_weight" id="v_weight" placeholder="Weight (kg)">
-            <input name="v_height" id="v_height" placeholder="Height (cm)">
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:8px;align-items:center">
-            <div><label>BMI (auto)</label><input name="v_bmi" id="v_bmi" readonly placeholder="Auto-calculated"></div>
-            <div style="display:flex;gap:8px;align-items:center"><button type="button" id="btnAddVitals" class="btn btn-ghost">➕ Add Vitals Row</button><div class="small-muted">Add rows then Save Vitals to persist to patient</div></div>
-          </div>
-
-          <div class="table-wrap" style="margin-bottom:8px;max-height:260px;overflow:auto;border:1px solid rgba(0,0,0,0.04);border-radius:8px;padding:6px">
-            <table>
-              <thead><tr><th>Date</th><th>Time</th><th>Temp</th><th>P</th><th>RR</th><th>BP</th><th>SpO₂</th><th>Pain</th><th>By</th><th>Note</th><th>Action</th></tr></thead>
-              <tbody id="vitalsTableBody"></tbody>
-            </table>
-          </div>
-
-          <div class="row full">
-            <label>Other monitoring notes</label><textarea name="monitorNotes"></textarea>
-          </div>
-
-          <div class="actions">
-            <button type="button" id="saveVitalsBtn" class="btn btn-primary" data-save="vitals">💾 Save Vitals</button>
-            <button type="button" id="clearVitals" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Notes & Plan -->
-      <section id="tab-notes" class="card tab-page" style="display:none">
-        <h3>7 • Nurse / Doctor Notes</h3>
-        <form id="form-notes">
-          <div class="row full"><label>Nurse's notes</label><textarea name="nurseNotes"></textarea></div>
-          <div class="row full"><label>Doctor's notes</label><textarea name="doctorNotes" id="doctorNotes"></textarea></div>
-
-          <div class="actions">
-            <button type="button" id="saveNotesBtn" class="btn btn-primary" data-save="notes">💾 Save Notes</button>
-            <button type="button" id="clearNotes" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-      <section id="tab-plan" class="card tab-page" style="display:none">
-        <h3>8 • Plan of Care</h3>
-        <form id="form-plan">
-          <div class="row full">
-            <label>Plan of care / Interventions / Evaluation</label><textarea name="planCare"></textarea>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn btn-primary" data-save="plan">💾 Save Plan</button>
-            <button type="button" id="clearPlan" class="btn btn-ghost">Clear</button>
-          </div>
-        </form>
-      </section>
-
-    </main>
-  </div>
+<div class="page" id="app" style="display:none">
+<div class="print-header">
+<h2>Olivarez College Tagaytay</h2>
+<small>ONE CARE EHR System</small>
+<hr style="margin-top:10px;margin-bottom:20px;border:1px solid #1E3A8A;"/>
 </div>
 
+<header style="display:none;">
+<div class="brand" id="brand" title="Go to Dashboard">
+<div class="logo-wrap">
+<svg aria-hidden="" fill="none" height="44" viewbox="0 0 64 64" width="44" xmlns="http://www.w3.org/2000/svg">
+<path d="M32 56s-20-12-24-19C3.8 29 3.6 20.4 9 15c5.6-5.4 13-3 17 0 4-3 11-5 17 0 4 3 11 6.4 16 0 5.2 5.4 5.2 14 1 22-4 7-24 20-24 20z" fill="#1E3A8A"></path>
+<rect fill="#FBBF24" height="16" rx="1.5" width="8" x="28" y="22"></rect>
+<rect fill="#FBBF24" height="8" rx="1.5" width="20" x="22" y="28"></rect>
+</svg>
+</div>
+<div>
+<div class="title">ONE CARE <span style="color:var(--gold)">SYSTEM</span></div>
+<div class="sub">Olivarez College Tagaytay • Version 1.2</div>
+</div>
+</div>
+<div class="header-controls"><button class="btn-ghost" id="printBtn">🖨️ Print</button>
+<input class="search" id="searchBoxTop" placeholder="Search name / physician / room..."/>
+<button class="btn btn-ghost" id="btnNew">➕ New Patient</button>
+<button class="btn-ghost" id="sidebarToggle" title="Toggle sidebar">☰</button>
+<button class="btn-ghost" id="darkToggle" title="Toggle dark mode">🌙</button>
+<div id="userInfo" style="display:flex;align-items:center;gap:8px"></div>
+<button class="btn btn-ghost" id="btnLogout">Logout</button>
+</div>
+</header>
+<div class="layout">
+<aside>
+<nav>
+<button class="navbtn active" data-target="tab-dashboard">Dashboard</button>
+<button class="navbtn" data-target="tab-info">1 • Patient Information</button>
+<button class="navbtn" data-target="tab-id">2 • Identification &amp; Insurance</button>
+<button class="navbtn" data-target="tab-history">3 • Medical History</button>
+<button class="navbtn" data-target="tab-labs">4 • Laboratory &amp; Diagnostics</button>
+<button class="navbtn" data-target="tab-meds">5 • Med Orders / I&amp;O</button>
+<button class="navbtn" data-target="tab-vitals">6 • Vitals &amp; Monitoring</button>
+<button class="navbtn" data-target="tab-notes">7 • Nurse / Doctor Notes</button>
+<button class="navbtn" data-target="tab-plan">8 • Plan of Care</button>
+</nav>
+<div class="small-muted" style="margin-top:12px">Tip: Save each tab to persist to the selected patient. Use New Patient to create a fresh record.</div>
+</aside>
+<main>
+<!-- Dashboard -->
+<section class="card tab-page" id="tab-dashboard">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div>
+<h3 style="margin:0">Dashboard</h3>
+<div class="small-muted">Manage patient records — refined view</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px">
+<div class="small-muted">Records: <strong id="count">0</strong></div>
+<select id="sortSelect" style="padding:8px;border-radius:8px;border:1px solid rgba(30,58,138,0.06)">
+<option value="updatedAt_desc">Sort: Recent</option>
+<option value="name_asc">Sort: Name A–Z</option>
+</select>
+</div>
+</div>
+<div id="patientsContainer" style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap"></div>
+</section>
+<!-- Patient Info -->
+<section class="card tab-page" id="tab-info" style="display:none">
+<h3>1 • Patient Information</h3>
+<form id="form-info">
+<div class="row">
+<div>
+<label>Full name *</label><input name="name" placeholder="Last, First Middle" required=""/>
+</div>
+<div>
+<label>Civil Status</label>
+<select name="civilStatus"><option value="">--</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select>
+</div>
+</div>
+<div class="row">
+<div><label>Date of Birth</label><input name="dob" type="date"/></div>
+<div><label>Place of Birth</label><input name="placeOfBirth"/></div>
+</div>
+<div class="row">
+<div><label>Nationality</label><input name="nationality"/></div>
+<div><label>Contact Number</label><input name="contact"/></div>
+</div>
+<div class="row">
+<div><label>Patient Status</label>
+<select name="patientStatus"><option>Inpatient</option><option>Outpatient</option></select>
+</div>
+<div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3"/></div>
+</div>
+<div class="row">
+<div><label>Bed No.</label><input name="bedNo"/></div>
+<div><label>Date of Admission</label><input name="admissionDate" type="date"/></div>
+</div>
+<div class="row">
+<div class="full">
+<label>Initial / Primary Diagnosis *</label>
+<input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required=""/>
+</div>
+</div>
+<div class="row">
+<div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name"/></div>
+<div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission"/></div>
+</div>
+<div class="row full">
+<label>Address</label><input name="address"/>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
+<button class="btn btn-ghost" id="clearInfo" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Identification -->
+<section class="card tab-page" id="tab-id" style="display:none">
+<h3>2 • Identification &amp; Insurance</h3>
+<form id="form-id">
+<div class="row">
+<div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
+<div><label>Government ID Number</label><input name="govIdNo"/></div>
+</div>
+<div class="row">
+<div><label>PhilHealth #</label><input name="philhealth"/></div>
+<div><label>PhilHealth Type</label><input name="philType"/></div>
+</div>
+<div class="row">
+<div><label>HMO / Insurance Provider</label><input name="hmo"/></div>
+<div><label>Policy / Membership #</label><input name="policyNo"/></div>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="id" type="button">💾 Save ID &amp; Insurance</button>
+<button class="btn btn-ghost" id="clearID" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Medical History -->
+<section class="card tab-page" id="tab-history" style="display:none">
+<h3>3 • Medical History</h3>
+<form id="form-history">
+<div class="row full">
+<label>Present Illness / Chief Complaint</label><textarea name="presentIllness"></textarea>
+</div>
+<div class="row full">
+<label>Past Medical History</label><textarea name="pastHx" placeholder="Chronic illnesses, surgeries"></textarea>
+</div>
+<div class="row">
+<div><label>Family Medical History</label><textarea name="familyHx"></textarea></div>
+<div><label>Current Medications</label><textarea name="currentMeds"></textarea></div>
+</div>
+<div class="row">
+<div><label>Immunization History</label><input name="immunization"/></div>
+<div><label>Lifestyle &amp; Vocational History</label><input name="lifestyle"/></div>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="history" type="button">💾 Save Medical History</button>
+<button class="btn btn-ghost" id="clearHistory" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Labs -->
+<section class="card tab-page" id="tab-labs" style="display:none">
+<h3>4 • Laboratory &amp; Diagnostics</h3>
+<form id="form-labs">
+<div class="row full">
+<label>Ordered Tests / Imaging</label><textarea name="orderedTests"></textarea>
+</div>
+<div class="row full">
+<label>Results / Interpretation</label><textarea name="testResults"></textarea>
+</div>
+<div class="row full">
+<label>Upload Lab Result (image or PDF)</label>
+<input accept="image/*,.pdf" id="labFileInput" type="file"/>
+<div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+<button class="btn btn-primary" id="uploadLabBtn" type="button">⬆️ Upload</button>
+<div class="small-muted">Files uploaded will be previewed and saved to patient when you Save Labs.</div>
+</div>
+<div id="labFilesList" style="margin-top:10px;display:flex;flex-wrap:wrap"></div>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="labs" type="button">💾 Save Labs</button>
+<button class="btn btn-ghost" id="clearLabs" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Meds / IV -->
+<section class="card tab-page" id="tab-meds" style="display:none">
+<h3>5 • Medication Orders / I&amp;O</h3>
+<form id="form-meds">
+<div class="row full">
+<label>Medication Orders (drug - dose - route - freq)</label><textarea name="medOrders"></textarea>
+</div>
+<div class="row">
+<div><label>IV Lines / Fluids</label><input name="ivFluids"/></div>
+<div><label>Fluid Rate / Notes</label><input name="ivNotes"/></div>
+</div>
+<div class="row">
+<div><label>Input (ml)</label><input min="0" name="inputMl" type="number"/></div>
+<div><label>Output (ml)</label><input min="0" name="outputMl" type="number"/></div>
+</div>
+<div class="row full" style="margin-top:6px">
+<div>
+<label>Volume to Infuse (mL)</label>
+<input id="ivVolume" min="0" name="ivVolume" placeholder="e.g., 1000" step="any" type="number"/>
+</div>
+<div>
+<label>Infusion Time (hours)</label>
+<input id="ivTime" min="0" name="ivTime" placeholder="e.g., 8" step="any" type="number"/>
+</div>
+</div>
+<div class="row full">
+<div>
+<label>Drop Factor (gtt/mL) — for gravity sets (optional)</label>
+<input id="ivDropFactor" min="0" name="ivDropFactor" placeholder="e.g., 15" step="any" type="number"/>
+</div>
+<div>
+<label>Flow Rate (auto)</label>
+<input id="ivFlowRate" name="ivFlowRate" placeholder="Auto-calculated (mL/hr or gtt/min)" readonly=""/>
+<div class="iv-help">Auto-calculated as you type. Results show mL/hr and gtt/min (if drop factor provided).</div>
+</div>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="meds" type="button">💾 Save Orders / I&amp;O</button>
+<button class="btn btn-ghost" id="clearMeds" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Vitals -->
+<section class="card tab-page" id="tab-vitals" style="display:none">
+<h3>6 • Vitals &amp; Monitoring</h3>
+<form id="form-vitals">
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+<input name="v_date" style="flex:1;min-width:140px" type="date"/>
+<input name="v_time" style="flex:1;min-width:120px" type="time"/>
+<input name="v_by" placeholder="Recorded by (initials)" style="flex:1;min-width:120px"/>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
+<input name="v_temp" placeholder="Temp (°C)"/>
+<input name="v_pulse" placeholder="Pulse (bpm)"/>
+<input name="v_rr" placeholder="RR (breaths/min)"/>
+<input name="v_bp" placeholder="BP (e.g., 120/80)"/>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
+<input name="v_spo2" placeholder="SpO₂ (% )"/>
+<input name="v_pain" placeholder="Pain (0–10)"/>
+<input id="v_weight" name="v_weight" placeholder="Weight (kg)"/>
+<input id="v_height" name="v_height" placeholder="Height (cm)"/>
+</div>
+<div style="display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:8px;align-items:center">
+<div><label>BMI (auto)</label><input id="v_bmi" name="v_bmi" placeholder="Auto-calculated" readonly=""/></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="btn btn-ghost" id="btnAddVitals" type="button">➕ Add Vitals Row</button><div class="small-muted">Add rows then Save Vitals to persist to patient</div></div>
+</div>
+<div class="table-wrap" style="margin-bottom:8px;max-height:260px;overflow:auto;border:1px solid rgba(0,0,0,0.04);border-radius:8px;padding:6px">
+<table>
+<thead><tr><th>Date</th><th>Time</th><th>Temp</th><th>P</th><th>RR</th><th>BP</th><th>SpO₂</th><th>Pain</th><th>By</th><th>Note</th><th>Action</th></tr></thead>
+<tbody id="vitalsTableBody"></tbody>
+</table>
+</div>
+<div class="row full">
+<label>Other monitoring notes</label><textarea name="monitorNotes"></textarea>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="vitals" id="saveVitalsBtn" type="button">💾 Save Vitals</button>
+<button class="btn btn-ghost" id="clearVitals" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- Notes & Plan -->
+<section class="card tab-page" id="tab-notes" style="display:none">
+<h3>7 • Nurse / Doctor Notes</h3>
+<form id="form-notes">
+<div class="row full"><label>Nurse's notes</label><textarea name="nurseNotes"></textarea></div>
+<div class="row full"><label>Doctor's notes</label><textarea id="doctorNotes" name="doctorNotes"></textarea></div>
+<div class="actions">
+<button class="btn btn-primary" data-save="notes" id="saveNotesBtn" type="button">💾 Save Notes</button>
+<button class="btn btn-ghost" id="clearNotes" type="button">Clear</button>
+</div>
+</form>
+</section>
+<section class="card tab-page" id="tab-plan" style="display:none">
+<h3>8 • Plan of Care</h3>
+<form id="form-plan">
+<div class="row full">
+<label>Plan of care / Interventions / Evaluation</label><textarea name="planCare"></textarea>
+</div>
+<div class="actions">
+<button class="btn btn-primary" data-save="plan" type="button">💾 Save Plan</button>
+<button class="btn btn-ghost" id="clearPlan" type="button">Clear</button>
+</div>
+</form>
+</section>
+</main>
+</div>
+</div>
 <!-- Modal -->
-<div id="modal" class="modal"><div class="card"><button style="float:right;background:transparent;border:0;font-size:18px;cursor:pointer" onclick="closeModal()">✕</button><div id="modalBody"></div></div></div>
-
+<div class="modal" id="modal"><div class="card"><button onclick="closeModal()" style="float:right;background:transparent;border:0;font-size:18px;cursor:pointer">✕</button><div id="modalBody"></div></div></div>
 <!-- Toast -->
 <div id="toast"></div>
-
 <!-- Loading -->
-<div id="loading" class="loading-overlay"><div class="card" style="padding:18px"><strong>Loading...</strong></div></div>
-
+<div class="loading-overlay" id="loading"><div class="card" style="padding:18px"><strong>Loading...</strong></div></div>
 <!-- Firebase SDKs (v8 compatible) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-
 <script>
 /* =========================
    Firebase initialization
@@ -926,5 +899,5 @@ renderLabFiles(); renderVitalsTable();
 document.getElementById('brand')?.addEventListener('click', ()=>{ document.querySelector('.navbtn[data-target="tab-dashboard"]').click(); });
 
 </script>
-</body>
+<script>document.getElementById('printBtn').addEventListener('click', () => { window.print(); });</script></body>
 </html>
