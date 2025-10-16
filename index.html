@@ -51,13 +51,14 @@
   nav button{width:100%;text-align:left;padding:10px;border-radius:10px;background:transparent;border:0;font-weight:700;display:flex;align-items:center;gap:10px}
   nav button.active{background:var(--primary);color:white}
   main{padding:0}
-  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;transition:transform var(--transition),box-shadow var(--transition)}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px;transition:transform var(--transition),box-shadow var(--transition);border:1px solid rgba(30,58,138,0.04)}
   .card:hover{transform:translateY(-4px)}
   h3{margin:0 0 10px 0;color:var(--primary);display:flex;align-items:center;gap:10px}
   form .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
   .full{grid-column:1/-1}
   label{display:block;font-weight:700;margin-bottom:6px}
-  input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(30,58,138,0.06);background:transparent;color:var(--muted)}
+  input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(30,58,138,0.12);background:transparent;color:var(--muted);transition:box-shadow var(--transition),border-color var(--transition)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 6px 20px rgba(11,116,255,0.12);}
   textarea{min-height:90px}
   #floatingSave{position:fixed;right:20px;bottom:24px;z-index:130;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,0.12);display:flex;align-items:center;gap:10px;background:var(--primary);color:white;padding:10px 14px}
   .modal{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.45);align-items:center;justify-content:center;z-index:140;opacity:0;pointer-events:none;transition:opacity 260ms ease}
@@ -272,35 +273,9 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
   border-bottom-color: var(--primary);
 }
 .tab-bar button:hover { color: var(--accent); }
-
-/* Enhanced form field visibility (hospital-style) */
-input, select, textarea {
-  border: 1.5px solid rgba(52,64,84,0.18);
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: #ffffff;
-  color: #0f1724;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease;
-  box-shadow: none;
-}
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
-}
-body.dark input, body.dark select, body.dark textarea {
-  background: #0f1724;
-  border-color: rgba(255,255,255,0.08);
-  color: #e6eefb;
-}
-label { font-weight:700; font-size:13px; color:var(--muted); }
-.row { display:flex; gap:12px; margin-bottom:10px; }
-.row .full { flex: 1 1 100%; }
-.row > div { flex: 1 1 50%; }
-.actions { display:flex; gap:8px; margin-top:10px; }
 </style>
 </head>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script><body>
+<body>
 <!-- LOGIN -->
 <div id="loginScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
 <div class="card" style="max-width:460px;width:100%">
@@ -355,17 +330,21 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 </header>
 <div class="layout">
 <aside>
+
 <nav>
 <button class="navbtn active" data-target="tab-dashboard">Dashboard</button>
 <button class="navbtn" data-target="tab-info">1 • Patient Information</button>
 <button class="navbtn" data-target="tab-id">2 • Identification &amp; Insurance</button>
 <button class="navbtn" data-target="tab-history">3 • Medical History</button>
-<button class="navbtn" data-target="tab-labs">4 • Laboratory &amp; Diagnostics</button>
-<button class="navbtn" data-target="tab-meds">5 • Med Orders / I&amp;O</button>
-<button class="navbtn" data-target="tab-vitals">6 • Vitals &amp; Monitoring</button>
-<button class="navbtn" data-target="tab-notes">7 • Nurse / Doctor Notes</button>
-<button class="navbtn" data-target="tab-plan">8 • Plan of Care</button>
+<button class="navbtn" data-target="tab-assessment">4 • Assessment</button>
+<button class="navbtn" data-target="tab-labs">5 • Laboratory &amp; Diagnostics</button>
+<button class="navbtn" data-target="tab-meds">6 • Medication Orders</button>
+<button class="navbtn" data-target="tab-vitals">7 • Vitals &amp; Monitoring</button>
+<button class="navbtn" data-target="tab-nurse">8 • Nurse Notes (FDAR)</button>
+<button class="navbtn" data-target="tab-doctor">9 • Doctor Notes</button>
+<button class="navbtn" data-target="tab-plan">10 • Discharge Plan</button>
 </nav>
+
 <div class="small-muted" style="margin-top:12px">Tip: Save each tab to persist to the selected patient. Use New Patient to create a fresh record.</div>
 </aside>
 <main>
@@ -395,49 +374,44 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <label>Full name *</label><input name="name" placeholder="Last, First Middle" required=""/>
 </div>
 <div>
-<label>Age</label><input min="0" name="age" placeholder="Age (years)" type="number"/>
+<label>Civil Status</label>
+<select name="civilStatus"><option value="">--</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select>
 </div>
+</div>
+<div class="row">
+  <div><label>Date of Birth</label><input name="dob" type="date"/></div>
+  <div><label>Age</label><input name="age" placeholder="Years" type="number" min="0"/></div>
+</div>
+<div class="row">
+  <div><label>Place of Birth</label><input name="placeOfBirth"/></div>
+  <div><label>Gender</label>
+    <select name="gender"><option value="">--</option><option>Male</option><option>Female</option><option>Other</option></select>
+  </div>
+</div>
+<div class="row">
+  <div><label>Nationality</label><input name="nationality"/></div>
+  <div><label>Contact Number</label><input name="contact"/></div>
+</div>
+<div class="row">
+  <div><label>Address</label><input name="address"/></div>
+  <div><label>Religion</label><input name="religion"/></div>
+</div>
+<div class="row">
+  <div><label>BMI (auto)</label><input id="info_bmi" name="bmi" placeholder="Auto (calculated from latest vitals)" readonly/></div>
+  <div></div>
+</div>
+<div class="row">
+<div><label>Patient Status</label>
+<select name="patientStatus"><option>Inpatient</option><option>Outpatient</option></select>
+</div>
+<div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3"/></div>
+</div>
+<div class="row">
+<div><label>Bed No.</label><input name="bedNo"/></div>
+<div><label>Date of Admission</label><input name="admissionDate" type="date"/></div>
 </div>
 <div class="row">
 <div class="full">
-<label>Address</label><input name="address" placeholder="Street, City, Province"/>
-</div>
-</div>
-<div class="row">
-<div>
-<label>Sex</label>
-<select name="sex">
-<option value="">-- Select --</option>
-<option>Male</option>
-<option>Female</option>
-<option>Prefer not to say</option>
-</select>
-</div>
-<div>
-<label>Religion</label>
-<select name="religion">
-<option value="">-- Select --</option>
-<option>Catholic</option>
-<option>Christian</option>
-<option>Muslim</option>
-<option>Iglesia</option>
-<option>Other</option>
-</select>
-</div>
-</div>
-<div class="row">
-<div>
-<label>Height (cm)</label><input id="info_height" min="0" name="height" placeholder="e.g., 170" type="number"/>
-</div>
-<div>
-<label>Weight (kg)</label><input id="info_weight" min="0" name="weight" placeholder="e.g., 70" type="number"/>
-</div>
-</div>
-<div class="row">
-<div>
-<label>BMI</label><input id="info_bmi" name="bmi" placeholder="Auto-calculated" readonly=""/>
-</div>
-<div>
 <label>Initial / Primary Diagnosis *</label>
 <input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required=""/>
 </div>
@@ -445,6 +419,9 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <div class="row">
 <div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name"/></div>
 <div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission"/></div>
+</div>
+<div class="row full">
+<label>Address</label><input name="address"/>
 </div>
 <div class="actions">
 <button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
@@ -457,25 +434,15 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <h3>2 • Identification &amp; Insurance</h3>
 <form id="form-id">
 <div class="row">
-<div>
-<label>PhilHealth #</label><input name="philhealth" placeholder="e.g., 12-345678901-2"/>
-</div>
-<div>
-<label>PhilHealth Type</label>
-<select name="philType">
-<option value="">-- Select --</option>
-<option>Member</option>
-<option>Dependent</option>
-<option>Indigent</option>
-<option>Sponsored</option>
-<option>Lifetime Member</option>
-<option>OFW</option>
-</select>
-</div>
-</div>
-<div class="row">
 <div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
 <div><label>Government ID Number</label><input name="govIdNo"/></div>
+</div>
+<div class="row">
+  <div style="display:flex;gap:8px;align-items:center"><div style="flex:1"><label>PhilHealth #</label><input name="philhealth" placeholder="XXXX-XXXX-XXXX"/></div><div style="width:220px"><label>PhilHealth Type</label><input name="philType"/></div></div>
+</div>
+<div class="row">
+<div><label>HMO / Insurance Provider</label><input name="hmo"/></div>
+<div><label>Policy / Membership #</label><input name="policyNo"/></div>
 </div>
 <div class="actions">
 <button class="btn btn-primary" data-save="id" type="button">💾 Save ID &amp; Insurance</button>
@@ -507,6 +474,99 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 </div>
 </form>
 </section>
+<!-- Assessment -->
+<section class="card tab-page" id="tab-assessment" style="display:none">
+<h3>4 • Assessment</h3>
+<form id="form-assessment">
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start">
+  <div class="iv-box">
+    <label><strong>SITUATION:</strong></label>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+      <label><input type="checkbox" name="situation_sitter"/> Sitter</label>
+      <label><input type="checkbox" name="situation_fall"/> Fall risk</label>
+      <label><input type="checkbox" name="situation_restraints"/> Restraints</label>
+      <label><input type="checkbox" name="situation_confused"/> Confused</label>
+      <label><input type="checkbox" name="situation_alarm"/> Alarm</label>
+      <label><input type="checkbox" name="situation_suicide"/> Suicide</label>
+      <label><input type="checkbox" name="situation_withdraw"/> Withdraw</label>
+    </div>
+  </div>
+  <div class="iv-box">
+    <label><strong>PRECAUTIONS:</strong></label>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+      <label><input type="checkbox" name="prec_none"/> None</label>
+      <label><input type="checkbox" name="prec_droplet"/> Droplet</label>
+      <label><input type="checkbox" name="prec_aspiration"/> Aspiration</label>
+      <label><input type="checkbox" name="prec_airborne"/> Airborne</label>
+      <label><input type="checkbox" name="prec_contact"/> Contact</label>
+      <label><input type="checkbox" name="prec_chemo"/> Chemo</label>
+      <label><input type="checkbox" name="prec_seizure"/> Seizure</label>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
+  <div class="iv-box">
+    <label><strong>CODE:</strong></label>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+      <label><input type="checkbox" name="code_none"/> None</label>
+      <label><input type="checkbox" name="code_full"/> Full</label>
+      <label><input type="checkbox" name="code_dnr"/> DNR</label>
+      <label><input type="checkbox" name="code_dni"/> DNI</label>
+      <label><input type="checkbox" name="code_limited"/> Limited</label>
+    </div>
+  </div>
+  <div class="iv-box">
+    <label><strong>RESPIRATORY:</strong></label>
+    <textarea name="respiratory" placeholder="Respiratory notes / oxygen needs" style="min-height:80px"></textarea>
+  </div>
+</div>
+
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
+  <div class="iv-box"><label><strong>NEURO:</strong></label><div style="margin-top:6px"><label>GCS Score: <input type="number" min="3" max="15" name="neuro_gcs" style="width:80px;display:inline-block;margin-left:8px"/></label></div></div>
+  <div class="iv-box"><label><strong>GI:</strong></label><textarea name="gi" placeholder="GI findings" style="min-height:80px"></textarea></div>
+</div>
+
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
+  <div class="iv-box"><label><strong>CARDIAC:</strong></label><textarea name="cardiac" style="min-height:60px"></textarea></div>
+  <div class="iv-box"><label><strong>GENITOURINARY:</strong></label><textarea name="genitourinary" style="min-height:60px"></textarea></div>
+</div>
+
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
+  <div class="iv-box"><label><strong>SKIN INTEGRITY:</strong></label><div style="margin-top:6px"><label><input type="checkbox" name="skin_intact"/> Intact</label><label><input type="checkbox" name="skin_wound"/> Wound</label><label><input type="checkbox" name="skin_surgical"/> Surgical</label><label><input type="checkbox" name="skin_other"/> Other</label></div></div>
+  <div class="iv-box"><label><strong>MUSCULOSKELETAL:</strong></label><textarea name="musculoskeletal" style="min-height:80px"></textarea></div>
+</div>
+
+<div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
+  <div class="iv-box"><label><strong>ALLERGIES:</strong></label><textarea name="allergies" style="min-height:80px"></textarea></div>
+  <div class="iv-box"><label><strong>DIET:</strong></label>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+      <label><input type="checkbox" name="diet_regular"/> Regular Diet</label>
+      <label><input type="checkbox" name="diet_soft"/> Soft Diet</label>
+      <label><input type="checkbox" name="diet_clear"/> Clear Liquid Diet</label>
+      <label><input type="checkbox" name="diet_full"/> Full Liquid Diet</label>
+      <label><input type="checkbox" name="diet_low_sod"/> Low-Sodium Diet</label>
+      <label><input type="checkbox" name="diet_diabetic"/> Diabetic Diet</label>
+      <label><input type="checkbox" name="diet_renal"/> Renal Diet</label>
+      <label><input type="checkbox" name="diet_ngt"/> NGT</label>
+      <label><input type="checkbox" name="diet_gastro"/> Gastrostomy Tube</label>
+    </div>
+  </div>
+</div>
+
+<div class="row full" style="margin-top:8px">
+  <label>NOTES</label>
+  <textarea name="assessment_notes" placeholder="Free-text assessment / additional notes" style="min-height:120px"></textarea>
+</div>
+
+<div class="actions">
+  <button class="btn btn-primary" data-save="assessment" type="button">💾 Save Assessment</button>
+  <button class="btn btn-ghost" type="button" onclick="document.getElementById('form-assessment').reset()">Clear</button>
+</div>
+</form>
+</section>
+
+
 <!-- Labs -->
 <section class="card tab-page" id="tab-labs" style="display:none">
 <h3>4 • Laboratory &amp; Diagnostics</h3>
@@ -534,7 +594,7 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 </section>
 <!-- Meds / IV -->
 <section class="card tab-page" id="tab-meds" style="display:none">
-<h3>5 • Medication Orders / I&amp;O</h3>
+<h3>6 • Medication Orders</h3>
 <form id="form-meds">
 <div class="row full">
 <label>Medication Orders (drug - dose - route - freq)</label><textarea name="medOrders"></textarea>
@@ -542,10 +602,6 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <div class="row">
 <div><label>IV Lines / Fluids</label><input name="ivFluids"/></div>
 <div><label>Fluid Rate / Notes</label><input name="ivNotes"/></div>
-</div>
-<div class="row">
-<div><label>Input (ml)</label><input min="0" name="inputMl" type="number"/></div>
-<div><label>Output (ml)</label><input min="0" name="outputMl" type="number"/></div>
 </div>
 <div class="row full" style="margin-top:6px">
 <div>
@@ -595,6 +651,10 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <input id="v_weight" name="v_weight" placeholder="Weight (kg)"/>
 <input id="v_height" name="v_height" placeholder="Height (cm)"/>
 </div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px">
+  <div><label>Input (mL)</label><input min="0" name="inputMl_v" type="number"/></div>
+  <div><label>Output (mL)</label><input min="0" name="outputMl_v" type="number"/></div>
+</div>
 <div style="display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:8px;align-items:center">
 <div><label>BMI (auto)</label><input id="v_bmi" name="v_bmi" placeholder="Auto-calculated" readonly=""/></div>
 <div style="display:flex;gap:8px;align-items:center"><button class="btn btn-ghost" id="btnAddVitals" type="button">➕ Add Vitals Row</button><div class="small-muted">Add rows then Save Vitals to persist to patient</div></div>
@@ -608,49 +668,59 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <div class="row full">
 <label>Other monitoring notes</label><textarea name="monitorNotes"></textarea>
 </div>
-<div class="row" style="margin-top:8px">
-<div>
-<label>Intake (ml)</label><input id="inputMl" min="0" name="inputMl" placeholder="e.g., 2000" type="number"/>
-</div>
-<div>
-<label>Output (ml)</label><input id="outputMl" min="0" name="outputMl" placeholder="e.g., 1800" type="number"/>
-</div>
-</div>
 <div class="actions">
 <button class="btn btn-primary" data-save="vitals" id="saveVitalsBtn" type="button">💾 Save Vitals</button>
 <button class="btn btn-ghost" id="clearVitals" type="button">Clear</button>
 </div>
 </form>
 </section>
-<!-- Notes & Plan -->
-<section class="card tab-page" id="tab-notes" style="display:none">
-<h3>7 • Nurse / Doctor Notes</h3>
-<form id="form-notes">
-<div class="row full"><label>Nurse's notes</label><textarea name="nurseNotes"></textarea></div>
+
+<!-- Nurse Notes (FDAR) -->
+<section class="card tab-page" id="tab-nurse" style="display:none">
+<h3>8 • Nurse Notes (FDAR)</h3>
+<form id="form-nurse">
+<div class="row full"><label>F — Focus / Findings</label><textarea name="nurse_f" placeholder="Focus or findings"></textarea></div>
+<div class="row full"><label>D — Data (Objective & Subjective)</label><textarea name="nurse_d" placeholder="Data: vitals, observations, quotes"></textarea></div>
+<div class="row full"><label>A — Action / Intervention</label><textarea name="nurse_a" placeholder="Actions taken / interventions"></textarea></div>
+<div class="row full"><label>R — Response / Evaluation</label><textarea name="nurse_r" placeholder="Patient response / evaluation"></textarea></div>
+<div class="actions">
+  <button class="btn btn-primary" data-save="nurse" type="button">💾 Save Nurse Notes</button>
+  <button class="btn btn-ghost" id="clearNurse" type="button">Clear</button>
+</div>
+</form>
+</section>
+
+<!-- Doctor Notes -->
+<section class="card tab-page" id="tab-doctor" style="display:none">
+<h3>9 • Doctor Notes</h3>
+<form id="form-doctor">
 <div class="row full"><label>Doctor's notes</label><textarea id="doctorNotes" name="doctorNotes"></textarea></div>
 <div class="actions">
-<button class="btn btn-primary" data-save="notes" id="saveNotesBtn" type="button">💾 Save Notes</button>
-<button class="btn btn-ghost" id="clearNotes" type="button">Clear</button>
+  <button class="btn btn-primary" data-save="doctor" type="button">💾 Save Doctor Notes</button>
+  <button class="btn btn-ghost" id="clearDoctor" type="button">Clear</button>
 </div>
 </form>
 </section>
+
+<!-- Discharge Plan -->
 <section class="card tab-page" id="tab-plan" style="display:none">
-<h3>8 • Plan of Care</h3>
+<h3>10 • Discharge Plan</h3>
 <form id="form-plan">
-<div class="row full">
-<label>Plan of care / Interventions / Evaluation</label><textarea name="planCare"></textarea>
-</div>
+<div class="row"><div><label>Final Diagnosis</label><input name="dis_finalDx"/></div><div><label>Condition on Discharge</label><input name="dis_condition"/></div></div>
+<div class="row"><div><label>Medications on Discharge</label><textarea name="dis_meds"></textarea></div><div><label>Follow-up / Referrals</label><textarea name="dis_followup"></textarea></div></div>
+<div class="row full"><label>Discharge Instructions</label><textarea name="dis_instructions" style="min-height:100px"></textarea></div>
 <div class="actions">
-<button class="btn btn-primary" data-save="plan" type="button">💾 Save Plan</button>
-<button class="btn btn-ghost" id="clearPlan" type="button">Clear</button>
+  <button class="btn btn-primary" data-save="plan" type="button">💾 Save Discharge Plan</button>
+  <button class="btn btn-ghost" id="clearPlan" type="button">Clear</button>
 </div>
 </form>
 </section>
+
 </main>
 </div>
 </div>
 <!-- Modal -->
-
+<button class="btn-ghost" id="printRecordBtn" style="position:absolute;top:12px;right:60px;z-index:200;">🖨️ Print Record</button>
 <div class="modal" id="modal"><div class="card">
 <div class="modal-header-bar">
 <div class="patient-header-info">
@@ -658,11 +728,7 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <div class="patient-subinfo" id="modalPatientSub">Status / Room</div>
 </div>
 <div class="patient-header-actions">
-  <button class="btn btn-ghost" id="printRecordBtn" style="display:none;">🖨 Print Record</button>
-  <button class="btn btn-close" onclick="closeModal()">×</button>
-</div>
-
-
+<button class="btn btn-ghost" id="printRecordBtn">🖨️ Print Record</button>
 <button class="btn btn-close" onclick="closeModal()">✕</button>
 </div>
 </div>
@@ -672,111 +738,11 @@ label { font-weight:700; font-size:13px; color:var(--muted); }
 <!-- Loading -->
 <div class="loading-overlay" id="loading"><div class="card" style="padding:18px"><strong>Loading...</strong></div></div>
 <!-- Firebase SDKs (v8 compatible) -->
-
-
-
-
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 <script>
-function renderPatientHTML(p){ 
-  const parts = []; 
-  parts.push(`<h3 style="margin-top:0">${escapeHtml(p.name||'-')} <small class="small-muted">ID: ${escapeHtml(p.id||'')}</small></h3>`);
-  if(p.photoURL) parts.push(`<div style="margin-bottom:8px"><img src="${escapeHtml(p.photoURL)}" style="width:120px;height:120px;border-radius:12px;object-fit:cover;margin-bottom:10px;"></div>`);
-  parts.push(`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
-    <div>
-      <div class="small-muted">Age</div><div>${escapeHtml(p.age||'-')}</div>
-    </div>
-    <div>
-      <div class="small-muted">Address</div><div>${escapeHtml(p.address||'-')}</div>
-    </div>
-    <div>
-      <div class="small-muted">Sex</div><div>${escapeHtml(p.sex||'-')}</div>
-    </div>
-    <div>
-      <div class="small-muted">Religion</div><div>${escapeHtml(p.religion||'-')}</div>
-    </div>
-  </div><hr>`);
-  function s(title, body){ return `<h4 style="margin:10px 0 6px 0;color:var(--primary)">${title}</h4><div style="margin-bottom:8px">${body||'<span class="small-muted">—</span>'}</div>`; }
-  var h = p.height || ''; var w = p.weight || ''; var bmiText = '';
-  if(h && w){
-    var hh = parseFloat(h); var ww = parseFloat(w);
-    if(isFinite(hh) && isFinite(ww) && hh>0){
-      var bmi = ww / ((hh/100)*(hh/100));
-      bmi = Math.round(bmi*10)/10;
-      var cat = '';
-      if(bmi < 18.5) cat = 'Underweight';
-      else if(bmi < 25) cat = 'Normal';
-      else if(bmi < 30) cat = 'Overweight';
-      else cat = 'Obese';
-      bmiText = bmi + ' — ' + cat;
-    }
-  }
-  parts.push(s('Contact & Address', `<b>Contact:</b> ${escapeHtml(p.contact||'-')}<br/><b>Address:</b> ${escapeHtml(p.address||'-')}`));
-  parts.push(s('Medical History', `<b>Present Illness:</b> ${escapeHtml(p.presentIllness||'-')}<br/><b>Past Hx:</b> ${escapeHtml(p.pastHx||'-')}`));
-  parts.push(s('Medications / Orders', `<b>Med Orders:</b> ${escapeHtml(p.medOrders||'-')}<br/><b>IV Flow:</b> ${escapeHtml(p.ivFlowRate||'-')}`));
-  let vitHtml = '<div style="display:flex;gap:12px;flex-wrap:wrap"><div><div class="small-muted">Height</div><div>'+escapeHtml(p.height||'-')+'</div></div><div><div class="small-muted">Weight</div><div>'+escapeHtml(p.weight||'-')+'</div></div><div><div class="small-muted">BMI</div><div>'+escapeHtml(bmiText||'-')+'</div></div></div>';
-  parts.push(s('Vitals', vitHtml));
-  parts.push(s('Labs & Diagnostics', `<b>Ordered Tests:</b> ${escapeHtml(p.orderedTests||'-')}<br/><b>Results:</b> ${escapeHtml(p.testResults||'-')}`));
-  if(p.labFiles && p.labFiles.length>0){ let labsHTML = '<div style="display:flex;flex-wrap:wrap;gap:10px">'; p.labFiles.forEach(f=>{ if(f.type && f.type.startsWith('image/')) labsHTML += `<div style="text-align:center"><img src="${escapeHtml(f.url)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px"><br><a href="${escapeHtml(f.url)}" target="_blank">View</a></div>`; else labsHTML += `<div><a href="${escapeHtml(f.url)}" target="_blank">📄 ${escapeHtml(f.name)}</a></div>`; }); labsHTML += '</div>'; parts.push(s('Uploaded Lab Files', labsHTML)); }
-  parts.push(s('Notes & Plan', `<b>Nurse:</b> ${escapeHtml(p.nurseNotes||'-')}<br/><b>Doctor:</b> ${escapeHtml(p.doctorNotes||'-')}<br/><b>Plan:</b> ${escapeHtml(p.planCare||'-')}`));
-  return parts.join(''); }
-</script>
-<script>document.getElementById('printBtn').addEventListener('click', () => { window.print(); });</script><script>
-// === Print Record Function (Doctor only) ===
-document.addEventListener('DOMContentLoaded', () => {
-  const printBtn = document.getElementById('printRecordBtn');
-  if (currentRole !== 'doctor') {
-    if (printBtn) printBtn.style.display = 'none';
-  } else {
-    if (printBtn) printBtn.addEventListener('click', () => {
-      const patientModal = document.querySelector('.modal') || document.querySelector('.patient-detail') || document.body;
-      const header = document.querySelector('.print-header');
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write('<html><head><title>Patient Record</title>');
-      printWindow.document.write('<style>@media print{body{font-family:Inter,sans-serif;color:#000;background:#fff;} h2{color:#1E3A8A;}}</style>');
-      printWindow.document.write('</head><body>');
-      printWindow.document.write(header.outerHTML);
-      printWindow.document.write(patientModal.outerHTML);
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.print();
-    });
-  }
-});
-</script><script>
-// Instant BMI calculation in Patient Information form
-(function(){
-  function bmiCategory(v){
-    if(v === null || v === undefined || isNaN(v)) return '';
-    if(v < 18.5) return 'Underweight';
-    if(v < 25) return 'Normal';
-    if(v < 30) return 'Overweight';
-    return 'Obese';
-  }
-  function updateInfoBMI(){
-    try {
-      const h = parseFloat(document.getElementById('info_height')?.value) || 0;
-      const w = parseFloat(document.getElementById('info_weight')?.value) || 0;
-      const out = document.getElementById('info_bmi');
-      if(!out) return;
-      if(!h || !w){ out.value=''; out.style.color=''; return; }
-      const bmi = w / ((h/100)*(h/100));
-      const val = Math.round(bmi*10)/10;
-      const cat = bmiCategory(val);
-      out.value = val + (cat ? ' — ' + cat : '');
-      if(cat === 'Normal') out.style.color = '#16A34A';
-      else if(cat === 'Underweight') out.style.color = '#6B7280';
-      else if(cat === 'Overweight') out.style.color = '#F59E0B';
-      else if(cat === 'Obese') out.style.color = '#DC2626';
-      else out.style.color = '';
-    } catch(e){ console.error(e); }
-  }
-  document.addEventListener('input', function(e){
-    const id = e.target && e.target.id;
-    if(id === 'info_height' || id === 'info_weight') updateInfoBMI();
-  });
-  document.addEventListener('DOMContentLoaded', updateInfoBMI);
-})();
-</script><script>
 /* =========================
    Firebase initialization
    ========================= */
@@ -927,7 +893,7 @@ navBtns.forEach(btn=>{
 /* =========================
    Vitals handling + BMI
    ========================= */
-function calculateBMI(){ const w = parseFloat(el('v_weight').value); const hcm = parseFloat(el('v_height').value); if(!isFinite(w) || !isFinite(hcm) || hcm<=0){ el('v_bmi').value=''; return; } const h = hcm/100; const bmi = w/(h*h); el('v_bmi').value = bmi.toFixed(1); }
+function calculateBMI(){ const w = parseFloat(el('v_weight').value); const hcm = parseFloat(el('v_height').value); if(!isFinite(w) || !isFinite(hcm) || hcm<=0){ el('v_bmi').value=''; return; } const h = hcm/100; const bmi = w/(h*h); el('v_bmi').value = bmi.toFixed(1); if(el('info_bmi')) el('info_bmi').value = bmi.toFixed(1); }
 ['v_weight','v_height'].forEach(id=>{ const e = document.getElementById(id); if(e) e.addEventListener('input', calculateBMI); });
 
 el('btnAddVitals').addEventListener('click', ()=>{
@@ -1066,7 +1032,7 @@ function renderPatients(list = patients) {
 }
 
 /* Save handlers — nurses restricted only from doctorNotes */
-const saveMap = { info:'form-info', id:'form-id', history:'form-history', labs:'form-labs', meds:'form-meds', vitals:'form-vitals', notes:'form-notes', plan:'form-plan' };
+const saveMap = { info:'form-info', id:'form-id', history:'form-history', assessment:'form-assessment', labs:'form-labs', meds:'form-meds', vitals:'form-vitals', nurse:'form-nurse', doctor:'form-doctor', plan:'form-plan' };
 document.querySelectorAll('[data-save]').forEach(btn => {
   btn.addEventListener('click', async () => {
     const tabKey = btn.dataset.save;
@@ -1144,7 +1110,7 @@ window.editPatient = async function(index){
   }
 
   // Admins & doctors: full load
-  loadIntoForm('form-info', p); loadIntoForm('form-id', p); loadIntoForm('form-history', p); loadIntoForm('form-labs', p); loadIntoForm('form-meds', p); loadIntoForm('form-notes', p); loadIntoForm('form-plan', p);
+  loadIntoForm('form-info', p); loadIntoForm('form-id', p); loadIntoForm('form-history', p); loadIntoForm('form-assessment', p); loadIntoForm('form-labs', p); loadIntoForm('form-meds', p); loadIntoForm('form-nurse', p); loadIntoForm('form-doctor', p); loadIntoForm('form-plan', p);
   vitalsRows = Array.isArray(p.vitals)?p.vitals.slice():[];
   uploadedLabs = Array.isArray(p.labFiles)?p.labFiles.slice():[];
   renderVitalsTable(); renderLabFiles();
@@ -1159,9 +1125,9 @@ function loadIntoForm(formId, data){ const f = document.getElementById(formId); 
 /* Renders patient details for modal */
 function renderPatientHTML(p){ const parts = []; parts.push(`<h3 style="margin-top:0">${escapeHtml(p.name||'-')} <small class="small-muted">ID: ${escapeHtml(p.id||'')}</small></h3>`);
   if(p.photoURL) parts.push(`<div style="margin-bottom:8px"><img src="${escapeHtml(p.photoURL)}" style="width:120px;height:120px;border-radius:12px;object-fit:cover;margin-bottom:10px;"></div>`);
-  parts.push(`<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px"><div><div class="small-muted">DOB</div><div>${escapeHtml(p.dob||'')}</div></div><div><div class="small-muted">Room / Bed</div><div>${escapeHtml(p.roomNo||'-')} ${p.bedNo?('/ '+escapeHtml(p.bedNo)):''}</div></div><div><div class="small-muted">Physician</div><div>${escapeHtml(p.physician||'-')}</div></div></div><hr>`);
+  parts.push(`<div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px"><div><div class="small-muted">DOB</div><div>${escapeHtml(p.dob||'')}</div></div><div><div class="small-muted">Age / Gender</div><div>${escapeHtml(p.age||'')} ${escapeHtml(p.gender||'')}</div></div><div><div class="small-muted">Room / Bed</div><div>${escapeHtml(p.roomNo||'-')} ${p.bedNo?('/ '+escapeHtml(p.bedNo)):''}</div></div><div><div class="small-muted">Physician</div><div>${escapeHtml(p.physician||'-')}</div></div></div><hr>`);
   function s(title, body){ return `<h4 style="margin:10px 0 6px 0;color:var(--primary)">${title}</h4><div style="margin-bottom:8px">${body||'<span class="small-muted">—</span>'}</div>`; }
-  parts.push(s('Contact & Address', `<b>Contact:</b> ${escapeHtml(p.contact||'-')}<br/><b>Address:</b> ${escapeHtml(p.address||'-')}`));
+  parts.push(s('Contact & Address', `<b>Contact:</b> ${escapeHtml(p.contact||'-')}<br/><b>Address:</b> ${escapeHtml(p.address||'-')}<br/><b>PhilHealth:</b> ${escapeHtml(p.philhealth||'-')} ${escapeHtml(p.philType||'')}<br/><b>Religion:</b> ${escapeHtml(p.religion||'-')}`));
   parts.push(s('Medical History', `<b>Present Illness:</b> ${escapeHtml(p.presentIllness||'-')}<br/><b>Past Hx:</b> ${escapeHtml(p.pastHx||'-')}`));
   parts.push(s('Medications / Orders', `<b>Med Orders:</b> ${escapeHtml(p.medOrders||'-')}<br/><b>IV Flow:</b> ${escapeHtml(p.ivFlowRate||'-')}`));
   let vitHtml = '<table style="width:100%;border-collapse:collapse"><thead><tr><th>Date</th><th>Time</th><th>Temp</th><th>P</th><th>RR</th><th>BP</th><th>SpO₂</th><th>Pain</th><th>By</th></tr></thead><tbody>';
@@ -1171,7 +1137,11 @@ function renderPatientHTML(p){ const parts = []; parts.push(`<h3 style="margin-t
   vitHtml += '</tbody></table>';
   parts.push(s('Vitals', vitHtml));
   parts.push(s('Labs & Diagnostics', `<b>Ordered Tests:</b> ${escapeHtml(p.orderedTests||'-')}<br/><b>Results:</b> ${escapeHtml(p.testResults||'-')}`));
-  if(p.labFiles && p.labFiles.length>0){ let labsHTML = '<div style="display:flex;flex-wrap:wrap;gap:10px">'; p.labFiles.forEach(f=>{ if(f.type && f.type.startsWith('image/')) labsHTML += `<div style="text-align:center"><img src="${escapeHtml(f.url)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px"><br><a href="${escapeHtml(f.url)}" target="_blank">View</a></div>`; else labsHTML += `<div><a href="${escapeHtml(f.url)}" target="_blank">📄 ${escapeHtml(f.name)}</a></div>`; }); labsHTML += '</div>'; parts.push(s('Uploaded Lab Files', labsHTML)); }
+  parts.push(s('Assessment', `<b>Assessment notes:</b> ${escapeHtml(p.assessment_notes||'-')}<br/><b>Diet:</b> ${escapeHtml((p.diet_summary)||'-')}`));
+  parts.push(s('Nurse FDAR', `<b>F:</b> ${escapeHtml(p.nurse_f||'-')}<br/><b>D:</b> ${escapeHtml(p.nurse_d||'-')}<br/><b>A:</b> ${escapeHtml(p.nurse_a||'-')}<br/><b>R:</b> ${escapeHtml(p.nurse_r||'-')}`));
+  parts.push(s('Discharge Plan', `<b>Final Dx:</b> ${escapeHtml(p.dis_finalDx||'-')}<br/><b>Condition:</b> ${escapeHtml(p.dis_condition||'-')}<br/><b>Instructions:</b> ${escapeHtml(p.dis_instructions||'-')}`));
+
+if(p.labFiles && p.labFiles.length>0){ let labsHTML = '<div style="display:flex;flex-wrap:wrap;gap:10px">'; p.labFiles.forEach(f=>{ if(f.type && f.type.startsWith('image/')) labsHTML += `<div style="text-align:center"><img src="${escapeHtml(f.url)}" style="width:120px;height:120px;object-fit:cover;border-radius:8px"><br><a href="${escapeHtml(f.url)}" target="_blank">View</a></div>`; else labsHTML += `<div><a href="${escapeHtml(f.url)}" target="_blank">📄 ${escapeHtml(f.name)}</a></div>`; }); labsHTML += '</div>'; parts.push(s('Uploaded Lab Files', labsHTML)); }
   parts.push(s('Notes & Plan', `<b>Nurse:</b> ${escapeHtml(p.nurseNotes||'-')}<br/><b>Doctor:</b> ${escapeHtml(p.doctorNotes||'-')}<br/><b>Plan:</b> ${escapeHtml(p.planCare||'-')}`));
   return parts.join(''); }
 
@@ -1183,68 +1153,28 @@ renderLabFiles(); renderVitalsTable();
 /* small safe UI: click brand to dashboard */
 document.getElementById('brand')?.addEventListener('click', ()=>{ document.querySelector('.navbtn[data-target="tab-dashboard"]').click(); });
 
-</script><script>
-// Show Print Record button only for doctor
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    const role = localStorage.getItem("role") || "nurse";
-    const btnPrint = document.getElementById("printRecordBtn");
-    if (btnPrint) btnPrint.style.display = role === "doctor" ? "inline-block" : "none";
-  }
-});
-</script><script>
-// --- Print Record logic ---
-function showPrintRecordButton() {
-  const role = localStorage.getItem('role');
-  const btnPrint = document.getElementById('printRecordBtn');
-  if (btnPrint) {
-    if (role === 'doctor') {
-      btnPrint.style.display = 'inline-flex';
-    } else {
-      btnPrint.style.display = 'none';
-    }
-  }
-}
-
-// When patient modal opens, check role
-document.addEventListener('click', function(e) {
-  if (e.target && e.target.matches('[data-view-patient]')) {
-    showPrintRecordButton();
-  }
-});
-
-// --- Print Record action ---
+</script>
+<script>
+// === Print Record Function (Doctor only) ===
 document.addEventListener('DOMContentLoaded', () => {
-  const btnPrint = document.getElementById('printRecordBtn');
-  if (btnPrint) {
-    btnPrint.addEventListener('click', () => {
-      const modalContent = document.querySelector('#patientModal .modal-body');
-      if (!modalContent) return;
+  const printBtn = document.getElementById('printRecordBtn');
+  if (typeof currentRole === 'undefined' || currentRole !== 'doctor') {
+    if (printBtn) printBtn.style.display = 'none';
+  } else {
+    if (printBtn) printBtn.addEventListener('click', () => {
+      const patientModal = document.querySelector('.modal') || document.querySelector('.patient-detail') || document.body;
+      const header = document.querySelector('.print-header');
       const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Print Record</title>
-            <style>
-              body { font-family: Arial, sans-serif; padding: 20px; background: #fff; color: #000; }
-              h1, h2, h3 { color: #222; }
-              hr { margin: 20px 0; }
-            </style>
-          </head>
-          <body>${modalContent.innerHTML}</body>
-        </html>
-      `);
+      printWindow.document.write('<html><head><title>Patient Record</title>');
+      printWindow.document.write('<style>@media print{body{font-family:Inter,sans-serif;color:#000;background:#fff;} h2{color:#1E3A8A;}}</style>');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write(header.outerHTML);
+      printWindow.document.write(patientModal.outerHTML);
+      printWindow.document.write('</body></html>');
       printWindow.document.close();
-      printWindow.focus();
       printWindow.print();
     });
   }
 });
-
-// Run when Firebase login completes
-firebase.auth().onAuthStateChanged(user => {
-  if (user) showPrintRecordButton();
-});
-</script>
-</body>
+</script></body>
 </html>
