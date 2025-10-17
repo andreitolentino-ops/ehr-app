@@ -1222,5 +1222,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+/* =========================
+   PRINT — MODAL ONLY
+   ========================= */
+document.querySelectorAll('#printRecordBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const modalBody = document.getElementById('modalBody');
+    if (!modalBody) {
+      alert('No patient record to print.');
+      return;
+    }
+
+    const printContents = modalBody.innerHTML;
+
+    // Create clean print window with header
+    const win = window.open('', '', 'width=900,height=650');
+    win.document.write(`
+      <html>
+      <head>
+        <title>Patient Record — ONE CARE SYSTEM</title>
+        <style>
+          body {
+            font-family: 'Inter', sans-serif;
+            background: white;
+            color: black;
+            padding: 40px;
+          }
+          header {
+            text-align: center;
+            margin-bottom: 25px;
+          }
+          header h2 {
+            color: #1E3A8A;
+            margin: 0;
+          }
+          header small {
+            color: #334155;
+          }
+          hr {
+            border: 1px solid #1E3A8A;
+            margin: 12px 0 24px;
+          }
+          /* Ensure modal layout fits A4 width */
+          .modal-content {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          @page { size: A4; margin: 20mm; }
+          @media print {
+            button, .btn, .header-controls { display: none !important; }
+          }
+        </style>
+      </head>
+      <body>
+        <header>
+          <h2>Olivarez College Tagaytay</h2>
+          <small>ONE CARE EHR System</small>
+        </header>
+        <hr/>
+        <div class="modal-content">
+          ${printContents}
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+  });
+});
 </script></body>
 </html>
