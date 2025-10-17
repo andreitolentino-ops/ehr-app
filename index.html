@@ -448,9 +448,28 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
   <div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission" /></div>
 </div>
 
-<!-- ✅ Fixed PhilHealth Type Dropdown -->
+<div class="actions">
+  <button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
+  <button class="btn btn-ghost" id="clearInfo" type="button">Clear</button>
+</div>
+</form>
+</section>
+<!-- End of Patient Info -->
+
+<!-- Identification -->
+<section class="card tab-page" id="tab-id" style="display:none">
+<h3>3 • Identification &amp; Insurance</h3>
+<form id="form-id">
 <div class="row">
-  <div><label>PhilHealth #</label><input name="philhealth" placeholder="XXXX-XXXX-XXXX" /></div>
+<div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
+<div><label>Government ID Number</label><input name="govIdNo"/></div>
+</div>
+<div class="row">
+<div class="row">
+  <div>
+    <label>PhilHealth #</label>
+    <input name="philhealth" placeholder="XXXX-XXXX-XXXX" />
+  </div>
   <div>
     <label>PhilHealth Type</label>
     <select name="philType">
@@ -466,25 +485,6 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
     </select>
   </div>
 </div>
-
-<div class="actions">
-  <button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
-  <button class="btn btn-ghost" id="clearInfo" type="button">Clear</button>
-</div>
-</form>
-</section>
-<!-- End of Patient Info -->
-
-<!-- Identification -->
-<section class="card tab-page" id="tab-id" style="display:none">
-<h3>2 • Identification &amp; Insurance</h3>
-<form id="form-id">
-<div class="row">
-<div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
-<div><label>Government ID Number</label><input name="govIdNo"/></div>
-</div>
-<div class="row">
-  <div style="display:flex;gap:8px;align-items:center"><div style="flex:1"><label>PhilHealth #</label><input name="philhealth" placeholder="XXXX-XXXX-XXXX"/></div><div style="width:220px"><label>PhilHealth Type</label><input name="philType"><option value="">-- Select --</option><option>Member</option><option>Dependent</option><option>Lifetime Member</option><option>Sponsored</option><option>Indigent</option><option>OFW</option><option>Private Employee</option><option>Government Employee</option></select></div></div>
 </div>
 <div class="row">
 <div><label>HMO / Insurance Provider</label><input name="hmo"/></div>
