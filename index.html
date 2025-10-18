@@ -417,9 +417,15 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 </div>
 
 <div class="row">
-  <div><label>BMI (auto)</label><input id="info_bmi" name="bmi" placeholder="Auto (calculated from latest vitals)" readonly /></div>
+  <div><label>Height (cm)</label><input id="height" name="height" type="number" min="0" placeholder="e.g., 170" /></div>
+  <div><label>Weight (kg)</label><input id="weight" name="weight" type="number" min="0" placeholder="e.g., 65" /></div>
+</div>
+
+<div class="row">
+  <div><label>BMI (auto)</label><input id="info_bmi" name="bmi" placeholder="Auto-calculated" readonly /></div>
   <div></div>
 </div>
+
 
 <div class="row">
   <div><label>Patient Status</label>
@@ -694,15 +700,12 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:8px">
 <input name="v_spo2" placeholder="SpO₂ (% )"/>
 <input name="v_pain" placeholder="Pain (0–10)"/>
-<input id="v_weight" name="v_weight" placeholder="Weight (kg)"/>
-<input id="v_height" name="v_height" placeholder="Height (cm)"/>
 </div>
 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px">
   <div><label>Input (mL)</label><input min="0" name="inputMl_v" type="number"/></div>
   <div><label>Output (mL)</label><input min="0" name="outputMl_v" type="number"/></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:8px;align-items:center">
-<div><label>BMI (auto)</label><input id="v_bmi" name="v_bmi" placeholder="Auto-calculated" readonly=""/></div>
 <div style="display:flex;gap:8px;align-items:center"><button class="btn btn-ghost" id="btnAddVitals" type="button">➕ Add Vitals Row</button><div class="small-muted">Add rows then Save Vitals to persist to patient</div></div>
 </div>
 <div class="table-wrap" style="margin-bottom:8px;max-height:260px;overflow:auto;border:1px solid rgba(0,0,0,0.04);border-radius:8px;padding:6px">
