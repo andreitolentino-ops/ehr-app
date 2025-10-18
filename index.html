@@ -273,6 +273,9 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
   border-bottom-color: var(--primary);
 }
 .tab-bar button:hover { color: var(--accent); }
+
+.card.tab-page { background: var(--card); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,255,255,0.1); }
 </style>
 </head>
 <body>
@@ -330,8 +333,6 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 </header>
 <div class="layout">
 <aside>
-
-
 <nav>
 <button class="navbtn active" data-target="tab-dashboard">Dashboard</button>
 <button class="navbtn" data-target="tab-info">1 • Patient Information</button>
@@ -345,8 +346,6 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <button class="navbtn" data-target="tab-doctor">9 • Doctor Notes</button>
 <button class="navbtn" data-target="tab-plan">10 • Discharge Plan</button>
 </nav>
-
-
 <div class="small-muted" style="margin-top:12px">Tip: Save each tab to persist to the selected patient. Use New Patient to create a fresh record.</div>
 </aside>
 <main>
@@ -373,95 +372,77 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <h3>1 • Patient Information</h3>
 <form id="form-info">
 <div class="row">
-  <div>
-    <label>Full name *</label>
-    <input name="name" placeholder="Last, First Middle" required />
-  </div>
-  <div>
-    <label>Civil Status</label>
-    <select name="civilStatus">
-      <option value="">--</option>
-      <option>Single</option>
-      <option>Married</option>
-      <option>Widowed</option>
-      <option>Divorced</option>
-    </select>
-  </div>
+<div>
+<label>Full name *</label>
+<input name="name" placeholder="Last, First Middle" required=""/>
 </div>
-
+<div>
+<label>Civil Status</label>
+<select name="civilStatus">
+<option value="">--</option>
+<option>Single</option>
+<option>Married</option>
+<option>Widowed</option>
+<option>Divorced</option>
+</select>
+</div>
+</div>
 <div class="row">
-  <div><label>Date of Birth</label><input name="dob" type="date" /></div>
-  <div><label>Age</label><input name="age" placeholder="Years" type="number" min="0" /></div>
+<div><label>Date of Birth</label><input name="dob" type="date"/></div>
+<div><label>Age</label><input min="0" name="age" placeholder="Years" type="number"/></div>
 </div>
-
 <div class="row">
-  <div><label>Place of Birth</label><input name="placeOfBirth" /></div>
-  <div><label>Gender</label>
-    <select name="gender">
-      <option value="">--</option>
-      <option>Male</option>
-      <option>Female</option>
-      <option>Other</option>
-    </select>
-  </div>
+<div><label>Place of Birth</label><input name="placeOfBirth"/></div>
+<div><label>Gender</label>
+<select name="gender">
+<option value="">--</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
 </div>
-
+</div><div class="row"><div><label>Weight (kg)</label><input id="info_weight" name="weight" step="any" type="number"/></div><div><label>Height (cm)</label><input id="info_height" name="height" step="any" type="number"/></div><div><label>BMI (auto)</label><div style="display:flex;align-items:center;gap:8px"><input id="info_bmi" name="bmi" placeholder="Auto" readonly="True"/><span id="bmi_reading" style="margin-left:8px;font-size:14px;color:var(--muted)"></span></div></div></div>
 <div class="row">
-  <div><label>Nationality</label><input name="nationality" /></div>
-  <div><label>Contact Number</label><input name="contact" /></div>
+<div><label>Nationality</label><input name="nationality"/></div>
+<div><label>Contact Number</label><input name="contact"/></div>
 </div>
-
 <div class="row">
-  <div><label>Address</label><input name="address" /></div>
-  <div><label>Religion</label><input name="religion" /></div>
+<div><label>Address</label><input name="address"/></div>
+<div><label>Religion</label><input name="religion"/></div>
 </div>
-
 <div class="row">
-  <div><label>Height (cm)</label><input id="height" name="height" type="number" min="0" placeholder="e.g., 170" /></div>
-  <div><label>Weight (kg)</label><input id="weight" name="weight" type="number" min="0" placeholder="e.g., 65" /></div>
+<div></div>
 </div>
-
 <div class="row">
-  <div><label>BMI (auto)</label><input id="info_bmi" name="bmi" placeholder="Auto-calculated" readonly /></div>
-  <div></div>
+<div><label>Patient Status</label>
+<select name="patientStatus">
+<option>Inpatient</option>
+<option>Outpatient</option>
+</select>
 </div>
-
-
+<div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3"/></div>
+</div>
 <div class="row">
-  <div><label>Patient Status</label>
-    <select name="patientStatus">
-      <option>Inpatient</option>
-      <option>Outpatient</option>
-    </select>
-  </div>
-  <div><label>Room No.</label><input name="roomNo" placeholder="e.g., Ward 3" /></div>
+<div><label>Bed No.</label><input name="bedNo"/></div>
+<div><label>Date of Admission</label><input name="admissionDate" type="date"/></div>
 </div>
-
 <div class="row">
-  <div><label>Bed No.</label><input name="bedNo" /></div>
-  <div><label>Date of Admission</label><input name="admissionDate" type="date" /></div>
+<div class="full">
+<label>Initial / Primary Diagnosis *</label>
+<input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required=""/>
 </div>
-
+</div>
 <div class="row">
-  <div class="full">
-    <label>Initial / Primary Diagnosis *</label>
-    <input name="initialDiagnosis" placeholder="Initial diagnosis / impression" required />
-  </div>
+<div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name"/></div>
+<div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission"/></div>
 </div>
-
-<div class="row">
-  <div><label>Attending Physician</label><input name="physician" placeholder="Dr. Name" /></div>
-  <div><label>Chief Complaint</label><input name="chiefComplaint" placeholder="Main reason for admission" /></div>
-</div>
-
 <div class="actions">
-  <button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
-  <button class="btn btn-ghost" id="clearInfo" type="button">Clear</button>
+<button class="btn btn-primary" data-save="info" id="saveInfoBtn" type="button">💾 Save Info</button>
+<button class="btn btn-ghost" id="clearInfo" type="button">Clear</button>
 </div>
 </form>
 </section>
 <!-- End of Patient Info -->
-
 <!-- Identification -->
 <section class="card tab-page" id="tab-id" style="display:none">
 <h3>3 • Identification &amp; Insurance</h3>
@@ -472,24 +453,24 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 </div>
 <div class="row">
 <div class="row">
-  <div>
-    <label>PhilHealth #</label>
-    <input name="philhealth" placeholder="XXXX-XXXX-XXXX" />
-  </div>
-  <div>
-    <label>PhilHealth Type</label>
-    <select name="philType">
-      <option value="">-- Select PhilHealth Type --</option>
-      <option>Member</option>
-      <option>Dependent</option>
-      <option>Lifetime Member</option>
-      <option>Sponsored</option>
-      <option>Indigent</option>
-      <option>OFW</option>
-      <option>Private Employee</option>
-      <option>Government Employee</option>
-    </select>
-  </div>
+<div>
+<label>PhilHealth #</label>
+<input name="philhealth" placeholder="XXXX-XXXX-XXXX"/>
+</div>
+<div>
+<label>PhilHealth Type</label>
+<select name="philType">
+<option value="">-- Select PhilHealth Type --</option>
+<option>Member</option>
+<option>Dependent</option>
+<option>Lifetime Member</option>
+<option>Sponsored</option>
+<option>Indigent</option>
+<option>OFW</option>
+<option>Private Employee</option>
+<option>Government Employee</option>
+</select>
+</div>
 </div>
 </div>
 <div class="row">
@@ -531,94 +512,42 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <h3>4 • Assessment</h3>
 <form id="form-assessment">
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start">
-  <div class="iv-box">
-    <label><strong>SITUATION:</strong></label>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-      <label><input type="checkbox" name="situation_sitter"/> Sitter</label>
-      <label><input type="checkbox" name="situation_fall"/> Fall risk</label>
-      <label><input type="checkbox" name="situation_restraints"/> Restraints</label>
-      <label><input type="checkbox" name="situation_confused"/> Confused</label>
-      <label><input type="checkbox" name="situation_alarm"/> Alarm</label>
-      <label><input type="checkbox" name="situation_suicide"/> Suicide</label>
-      <label><input type="checkbox" name="situation_withdraw"/> Withdraw</label>
-    </div>
-  </div>
-  <div class="iv-box">
-    <label><strong>PRECAUTIONS:</strong></label>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-      <label><input type="checkbox" name="prec_none"/> None</label>
-      <label><input type="checkbox" name="prec_droplet"/> Droplet</label>
-      <label><input type="checkbox" name="prec_aspiration"/> Aspiration</label>
-      <label><input type="checkbox" name="prec_airborne"/> Airborne</label>
-      <label><input type="checkbox" name="prec_contact"/> Contact</label>
-      <label><input type="checkbox" name="prec_chemo"/> Chemo</label>
-      <label><input type="checkbox" name="prec_seizure"/> Seizure</label>
-    </div>
-  </div>
+<div class="iv-box"><label>SITUATION:</label><select name="situation"><option>Sitter</option><option>Fall risk</option><option>Restraints</option><option>Confused</option><option>Alarm</option><option>Suicide</option><option>Withdraw</option></select></div>
+<div class="iv-box"><label>PRECAUTIONS:</label><select name="precautions"><option>None</option><option>Droplet</option><option>Aspiration</option><option>Airborne</option><option>Contact</option><option>Chemo</option><option>Seizure</option></select></div>
 </div>
-
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
-  <div class="iv-box">
-    <label><strong>CODE:</strong></label>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-      <label><input type="checkbox" name="code_none"/> None</label>
-      <label><input type="checkbox" name="code_full"/> Full</label>
-      <label><input type="checkbox" name="code_dnr"/> DNR</label>
-      <label><input type="checkbox" name="code_dni"/> DNI</label>
-      <label><input type="checkbox" name="code_limited"/> Limited</label>
-    </div>
-  </div>
-  <div class="iv-box">
-    <label><strong>RESPIRATORY:</strong></label>
-    <textarea name="respiratory" placeholder="Respiratory notes / oxygen needs" style="min-height:80px"></textarea>
-  </div>
+<div class="iv-box"><label>CODE:</label><select name="code"><option>None</option><option>Full</option><option>DNR</option><option>DNI</option><option>Limited</option></select></div>
+<div class="iv-box">
+<label><strong>RESPIRATORY:</strong></label>
+<textarea name="respiratory" placeholder="Respiratory notes / oxygen needs" style="min-height:80px"></textarea>
 </div>
-
+</div>
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
-  <div class="iv-box"><label><strong>NEURO:</strong></label><div style="margin-top:6px"><label>GCS Score: <input type="number" min="3" max="15" name="neuro_gcs" style="width:80px;display:inline-block;margin-left:8px"/></label></div></div>
-  <div class="iv-box"><label><strong>GI:</strong></label><textarea name="gi" placeholder="GI findings" style="min-height:80px"></textarea></div>
+<div class="iv-box"><label><strong>NEURO:</strong></label><div style="margin-top:6px"><label>GCS Score: <input max="15" min="3" name="neuro_gcs" style="width:80px;display:inline-block;margin-left:8px" type="number"/></label></div></div>
+<div class="iv-box"><label><strong>GI:</strong></label><textarea name="gi" placeholder="GI findings" style="min-height:80px"></textarea></div>
 </div>
-
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
-  <div class="iv-box"><label><strong>CARDIAC:</strong></label><textarea name="cardiac" style="min-height:60px"></textarea></div>
-  <div class="iv-box"><label><strong>GENITOURINARY:</strong></label><textarea name="genitourinary" style="min-height:60px"></textarea></div>
+<div class="iv-box"><label><strong>CARDIAC:</strong></label><textarea name="cardiac" style="min-height:60px"></textarea></div>
+<div class="iv-box"><label><strong>GENITOURINARY:</strong></label><textarea name="genitourinary" style="min-height:60px"></textarea></div>
 </div>
-
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
-  <div class="iv-box"><label><strong>SKIN INTEGRITY:</strong></label><div style="margin-top:6px"><label><input type="checkbox" name="skin_intact"/> Intact</label><label><input type="checkbox" name="skin_wound"/> Wound</label><label><input type="checkbox" name="skin_surgical"/> Surgical</label><label><input type="checkbox" name="skin_other"/> Other</label></div></div>
-  <div class="iv-box"><label><strong>MUSCULOSKELETAL:</strong></label><textarea name="musculoskeletal" style="min-height:80px"></textarea></div>
+<div class="iv-box"><label>SKIN INTEGRITY:</label><select name="skin_integrity"><option>Intact</option><option>Wound</option><option>Surgical</option><option>Other</option></select></div>
+<div class="iv-box"><label><strong>MUSCULOSKELETAL:</strong></label><textarea name="musculoskeletal" style="min-height:80px"></textarea></div>
 </div>
-
 <div class="row" style="grid-template-columns:1fr 1fr;align-items:start;margin-top:8px">
-  <div class="iv-box"><label><strong>ALLERGIES:</strong></label><textarea name="allergies" style="min-height:80px"></textarea></div>
-  <div class="iv-box"><label><strong>DIET:</strong></label>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-      <label><input type="checkbox" name="diet_regular"/> Regular Diet</label>
-      <label><input type="checkbox" name="diet_soft"/> Soft Diet</label>
-      <label><input type="checkbox" name="diet_clear"/> Clear Liquid Diet</label>
-      <label><input type="checkbox" name="diet_full"/> Full Liquid Diet</label>
-      <label><input type="checkbox" name="diet_low_sod"/> Low-Sodium Diet</label>
-      <label><input type="checkbox" name="diet_diabetic"/> Diabetic Diet</label>
-      <label><input type="checkbox" name="diet_renal"/> Renal Diet</label>
-      <label><input type="checkbox" name="diet_ngt"/> NGT</label>
-      <label><input type="checkbox" name="diet_gastro"/> Gastrostomy Tube</label>
-    </div>
-  </div>
+<div class="iv-box"><label><strong>ALLERGIES:</strong></label><textarea name="allergies" style="min-height:80px"></textarea></div>
+<div class="iv-box"><label>DIET:</label><select name="diet"><option>Regular Diet</option><option>Soft Diet</option><option>Clear Liquid Diet</option><option>Full Liquid Diet</option><option>Low-Sodium Diet</option><option>Diabetic Diet</option><option>Renal Diet</option><option>NGT</option><option>Gastrostomy Tube</option></select></div>
 </div>
-
 <div class="row full" style="margin-top:8px">
-  <label>NOTES</label>
-  <textarea name="assessment_notes" placeholder="Free-text assessment / additional notes" style="min-height:120px"></textarea>
+<label>NOTES</label>
+<textarea name="assessment_notes" placeholder="Free-text assessment / additional notes" style="min-height:120px"></textarea>
 </div>
-
 <div class="actions">
-  <button class="btn btn-primary" data-save="assessment" type="button">💾 Save Assessment</button>
-  <button class="btn btn-ghost" type="button" onclick="document.getElementById('form-assessment').reset()">Clear</button>
+<button class="btn btn-primary" data-save="assessment" type="button">💾 Save Assessment</button>
+<button class="btn btn-ghost" onclick="document.getElementById('form-assessment').reset()" type="button">Clear</button>
 </div>
 </form>
 </section>
-
-
 <!-- Labs -->
 <section class="card tab-page" id="tab-labs" style="display:none">
 <h3>4 • Laboratory &amp; Diagnostics</h3>
@@ -649,7 +578,38 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <h3>6 • Medication Orders</h3>
 <form id="form-meds">
 <div class="row full">
-<label>Medication Orders (drug - dose - route - freq)</label><textarea name="medOrders"></textarea>
+<label>Medication Orders</label>
+<div style="overflow-x:auto;">
+<table id="medTable" style="width:100%;border-collapse:collapse;margin-top:8px;">
+<thead>
+<tr>
+<th>Drugs</th>
+<th>Dosage</th>
+<th>Route</th>
+<th>Frequency</th>
+<th>Administered By</th>
+<th>Ordered By</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="medTableBody">
+<tr>
+<td><input name="drug" placeholder="e.g., Paracetamol"/></td>
+<td><input name="dosage" placeholder="e.g., 1g"/></td>
+<td><input name="route" placeholder="e.g., IV"/></td>
+<td><input name="frequency" placeholder="e.g., Q4"/></td>
+<td><input name="adminBy" placeholder="e.g., MDSE"/></td>
+<td><input name="orderedBy" placeholder="e.g., Dr. S. Hernandez"/></td>
+<td><button class="btn btn-ghost" onclick="removeMedRow(this)" type="button">🗑️</button></td>
+</tr>
+</tbody>
+</table>
+<button class="btn btn-primary" onclick="addMedRow()" style="margin-top:6px;" type="button">➕ Add Row</button>
+</div>
+</div>
+
+<div class="row full">
+<label>Medication Orders (drug - dose - route - freq)</label>
 </div>
 <div class="row">
 <div><label>IV Lines / Fluids</label><input name="ivFluids"/></div>
@@ -680,7 +640,25 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <button class="btn btn-primary" data-save="meds" type="button">💾 Save Orders / I&amp;O</button>
 <button class="btn btn-ghost" id="clearMeds" type="button">Clear</button>
 </div>
-</form>
+<script>
+        function addMedRow() {
+          const tbody = document.getElementById('medTableBody');
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td><input name="drug" placeholder="e.g., Paracetamol"></td>
+            <td><input name="dosage" placeholder="e.g., 1g"></td>
+            <td><input name="route" placeholder="e.g., IV"></td>
+            <td><input name="frequency" placeholder="e.g., Q4"></td>
+            <td><input name="adminBy" placeholder="e.g., MDSE"></td>
+            <td><input name="orderedBy" placeholder="e.g., Dr. S. Hernandez"></td>
+            <td><button type="button" class="btn btn-ghost" onclick="removeMedRow(this)">🗑️</button></td>
+          `;
+          tbody.appendChild(row);
+        }
+        function removeMedRow(btn) {
+          btn.closest('tr').remove();
+        }
+        </script></form>
 </section>
 <!-- Vitals -->
 <section class="card tab-page" id="tab-vitals" style="display:none">
@@ -702,8 +680,8 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <input name="v_pain" placeholder="Pain (0–10)"/>
 </div>
 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:8px">
-  <div><label>Input (mL)</label><input min="0" name="inputMl_v" type="number"/></div>
-  <div><label>Output (mL)</label><input min="0" name="outputMl_v" type="number"/></div>
+<div><label>Input (mL)</label><input min="0" name="inputMl_v" type="number"/></div>
+<div><label>Output (mL)</label><input min="0" name="outputMl_v" type="number"/></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:8px;align-items:center">
 <div style="display:flex;gap:8px;align-items:center"><button class="btn btn-ghost" id="btnAddVitals" type="button">➕ Add Vitals Row</button><div class="small-muted">Add rows then Save Vitals to persist to patient</div></div>
@@ -723,34 +701,31 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 </div>
 </form>
 </section>
-
 <!-- Nurse Notes (FDAR) -->
 <section class="card tab-page" id="tab-nurse" style="display:none">
 <h3>8 • Nurse Notes (FDAR)</h3>
 <form id="form-nurse">
 <div class="row full"><label>F — Focus / Findings</label><textarea name="nurse_f" placeholder="Focus or findings"></textarea></div>
-<div class="row full"><label>D — Data (Objective & Subjective)</label><textarea name="nurse_d" placeholder="Data: vitals, observations, quotes"></textarea></div>
+<div class="row full"><label>D — Data (Objective &amp; Subjective)</label><textarea name="nurse_d" placeholder="Data: vitals, observations, quotes"></textarea></div>
 <div class="row full"><label>A — Action / Intervention</label><textarea name="nurse_a" placeholder="Actions taken / interventions"></textarea></div>
 <div class="row full"><label>R — Response / Evaluation</label><textarea name="nurse_r" placeholder="Patient response / evaluation"></textarea></div>
 <div class="actions">
-  <button class="btn btn-primary" data-save="nurse" type="button">💾 Save Nurse Notes</button>
-  <button class="btn btn-ghost" id="clearNurse" type="button">Clear</button>
+<button class="btn btn-primary" data-save="nurse" type="button">💾 Save Nurse Notes</button>
+<button class="btn btn-ghost" id="clearNurse" type="button">Clear</button>
 </div>
 </form>
 </section>
-
 <!-- Doctor Notes -->
 <section class="card tab-page" id="tab-doctor" style="display:none">
 <h3>9 • Doctor Notes</h3>
 <form id="form-doctor">
 <div class="row full"><label>Doctor's notes</label><textarea id="doctorNotes" name="doctorNotes"></textarea></div>
 <div class="actions">
-  <button class="btn btn-primary" data-save="doctor" type="button">💾 Save Doctor Notes</button>
-  <button class="btn btn-ghost" id="clearDoctor" type="button">Clear</button>
+<button class="btn btn-primary" data-save="doctor" type="button">💾 Save Doctor Notes</button>
+<button class="btn btn-ghost" id="clearDoctor" type="button">Clear</button>
 </div>
 </form>
 </section>
-
 <!-- Discharge Plan -->
 <section class="card tab-page" id="tab-plan" style="display:none">
 <h3>10 • Discharge Plan</h3>
@@ -759,12 +734,11 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <div class="row"><div><label>Medications on Discharge</label><textarea name="dis_meds"></textarea></div><div><label>Follow-up / Referrals</label><textarea name="dis_followup"></textarea></div></div>
 <div class="row full"><label>Discharge Instructions</label><textarea name="dis_instructions" style="min-height:100px"></textarea></div>
 <div class="actions">
-  <button class="btn btn-primary" data-save="plan" type="button">💾 Save Discharge Plan</button>
-  <button class="btn btn-ghost" id="clearPlan" type="button">Clear</button>
+<button class="btn btn-primary" data-save="plan" type="button">💾 Save Discharge Plan</button>
+<button class="btn btn-ghost" id="clearPlan" type="button">Clear</button>
 </div>
 </form>
 </section>
-
 </main>
 </div>
 </div>
@@ -787,7 +761,32 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 <!-- Loading -->
 <div class="loading-overlay" id="loading"><div class="card" style="padding:18px"><strong>Loading...</strong></div></div>
 <!-- Firebase SDKs (v8 compatible) -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js">
+// Independent BMI calculation for Patient Info
+function updateInfoBMI(){
+  const w = parseFloat(document.getElementById('info_weight').value);
+  const h = parseFloat(document.getElementById('info_height').value);
+  const bmiField = document.getElementById('info_bmi');
+  const bmiRead = document.getElementById('bmi_reading');
+  if(!isFinite(w) || !isFinite(h) || h <= 0){
+    bmiField.value = '';
+    bmiRead.textContent = '';
+    return;
+  }
+  const bmi = w / Math.pow(h/100, 2);
+  bmiField.value = bmi.toFixed(1);
+  let reading = '';
+  if(bmi < 18.5) reading = '(Underweight)';
+  else if(bmi < 25) reading = '(Normal)';
+  else if(bmi < 30) reading = '(Overweight)';
+  else reading = '(Obese)';
+  bmiRead.textContent = reading;
+}
+['info_weight','info_height'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', updateInfoBMI);
+});
+</script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
@@ -1294,5 +1293,44 @@ document.querySelectorAll('#printRecordBtn').forEach(btn => {
     win.print();
   });
 });
-</script></body>
+</script>
+<script>
+// Patient-info independent BMI calculator (read-only BMI, inline reading)
+// Inserts listeners for #info_weight and #info_height
+(function(){
+  function computeBMI(){
+    var wEl = document.getElementById('info_weight');
+    var hEl = document.getElementById('info_height');
+    var bmiEl = document.getElementById('info_bmi');
+    var readEl = document.getElementById('bmi_reading');
+    if(!bmiEl || !readEl) return;
+    var w = parseFloat(wEl && wEl.value);
+    var h = parseFloat(hEl && hEl.value);
+    if(!isFinite(w) || !isFinite(h) || h <= 0){
+      bmiEl.value = '';
+      readEl.textContent = '';
+      return;
+    }
+    var bmi = w / Math.pow(h/100, 2);
+    bmiEl.value = bmi.toFixed(1);
+    var cat = '';
+    if(bmi < 18.5) cat = '(Underweight)';
+    else if(bmi < 25) cat = '(Normal)';
+    else if(bmi < 30) cat = '(Overweight)';
+    else cat = '(Obese)';
+    readEl.textContent = ' ' + cat;
+  }
+  function attach(){
+    var w = document.getElementById('info_weight');
+    var h = document.getElementById('info_height');
+    if(w) w.addEventListener('input', computeBMI);
+    if(h) h.addEventListener('input', computeBMI);
+    // compute on load in case values are preset
+    computeBMI();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attach);
+  else attach();
+})();
+</script>
+</body>
 </html>
