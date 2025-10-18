@@ -276,6 +276,61 @@ body.dark #printRecordBtn { background: #1d4ed8; color: white; }
 
 .card.tab-page { background: var(--card); box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
 body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,255,255,0.1); }
+
+/* Enhanced visibility of input boxes */
+.iv-box {
+  background: rgba(30,58,138,0.08);
+  border: 1px solid rgba(30,58,138,0.2);
+}
+body.dark .iv-box {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.25);
+}
+input, select, textarea {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(30,58,138,0.25);
+}
+body.dark input, body.dark select, body.dark textarea {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.25);
+}
+
+#medTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 8px;
+  font-size: 14px;
+}
+#medTable th {
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  text-align: left;
+}
+#medTable td {
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 6px;
+}
+#medTable tr:nth-child(even) {
+  background: rgba(30,58,138,0.04);
+}
+#medTable tr:hover {
+  background: rgba(30,58,138,0.1);
+}
+body.dark #medTable tr:nth-child(even) {
+  background: rgba(255,255,255,0.08);
+}
+body.dark #medTable tr:hover {
+  background: rgba(255,255,255,0.15);
+}
+#medTable input {
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(30,58,138,0.2);
+}
 </style>
 </head>
 <body>
@@ -333,19 +388,7 @@ body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,2
 </header>
 <div class="layout">
 <aside>
-<nav>
-<button class="navbtn active" data-target="tab-dashboard">Dashboard</button>
-<button class="navbtn" data-target="tab-info">1 • Patient Information</button>
-<button class="navbtn" data-target="tab-assessment">2 • Assessment</button>
-<button class="navbtn" data-target="tab-id">3 • Identification &amp; Insurance</button>
-<button class="navbtn" data-target="tab-history">4 • Medical History</button>
-<button class="navbtn" data-target="tab-labs">5 • Laboratory &amp; Diagnostics</button>
-<button class="navbtn" data-target="tab-meds">6 • Medication Orders</button>
-<button class="navbtn" data-target="tab-vitals">7 • Vitals &amp; Monitoring</button>
-<button class="navbtn" data-target="tab-nurse">8 • Nurse Notes (FDAR)</button>
-<button class="navbtn" data-target="tab-doctor">9 • Doctor Notes</button>
-<button class="navbtn" data-target="tab-plan">10 • Discharge Plan</button>
-</nav>
+<nav><button class="navbtn" data-target="tab-info">1 • Patient Information</button><button class="navbtn" data-target="tab-id">2 • Identification &amp; Insurance</button><button class="navbtn" data-target="tab-history">3 • Medical History</button><button class="navbtn" data-target="tab-assessment">4 • Assessment</button><button class="navbtn" data-target="tab-labs">5 • Laboratory &amp; Diagnostics</button><button class="navbtn" data-target="tab-meds">6 • Medication Orders</button><button class="navbtn" data-target="tab-vitals">7 • Vitals &amp; Monitoring</button><button class="navbtn" data-target="tab-nurse">8 • Nurse Notes (FDAR)</button><button class="navbtn" data-target="tab-doctor">9 • Doctor Notes</button><button class="navbtn" data-target="tab-plan">10 • Discharge Plan</button></nav>
 <div class="small-muted" style="margin-top:12px">Tip: Save each tab to persist to the selected patient. Use New Patient to create a fresh record.</div>
 </aside>
 <main>
@@ -445,7 +488,7 @@ body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,2
 <!-- End of Patient Info -->
 <!-- Identification -->
 <section class="card tab-page" id="tab-id" style="display:none">
-<h3>3 • Identification &amp; Insurance</h3>
+<h3>2 • Identification &amp; Insurance</h3>
 <form id="form-id">
 <div class="row">
 <div><label>Government ID Type</label><input name="govIdType" placeholder="Driver's License / Passport"/></div>
@@ -550,7 +593,7 @@ body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,2
 </section>
 <!-- Labs -->
 <section class="card tab-page" id="tab-labs" style="display:none">
-<h3>4 • Laboratory &amp; Diagnostics</h3>
+<h3>5 • Laboratory &amp; Diagnostics</h3>
 <form id="form-labs">
 <div class="row full">
 <label>Ordered Tests / Imaging</label><textarea name="orderedTests"></textarea>
@@ -607,7 +650,6 @@ body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,2
 <button class="btn btn-primary" onclick="addMedRow()" style="margin-top:6px;" type="button">➕ Add Row</button>
 </div>
 </div>
-
 <div class="row full">
 <label>Medication Orders (drug - dose - route - freq)</label>
 </div>
@@ -662,7 +704,7 @@ body.dark .card.tab-page { background: #101826; box-shadow: 0 0 0 2px rgba(255,2
 </section>
 <!-- Vitals -->
 <section class="card tab-page" id="tab-vitals" style="display:none">
-<h3>6 • Vitals &amp; Monitoring</h3>
+<h3>7 • Vitals &amp; Monitoring</h3>
 <form id="form-vitals">
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
 <input name="v_date" style="flex:1;min-width:140px" type="date"/>
